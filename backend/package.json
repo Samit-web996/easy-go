@@ -1,0 +1,21 @@
+{
+  "name": "car-rental-backend",
+  "version": "1.0.0",
+  "description": "Backend for Car Rental Project",
+  "main": "easyIndex.js",
+  "scripts": {
+    "start": "node easyIndex.js",
+    "dev": "nodemon easyIndex.js",
+    "prod": "pm2 start easyIndex"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.4",
+    "express": "^5.2.1",
+    "joi": "^18.0.2",
+    "jsonwebtoken": "^9.0.3",
+    "mysql2": "^3.16.3",
+    "nodemon": "^3.1.11"
+  }
+}
