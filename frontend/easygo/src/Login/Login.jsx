@@ -28,16 +28,16 @@ function Login() {
     const result = await res.json();
     console.log(res.status , result);
     if(res.ok) {
-      alert("Login Successful 👍");
-      navigate("/DashBoard")
+      alert("Login Successful ");
+      navigate("/admin")
     }else{
 
-    alert (result.message || "Invalid credentials ❌")
+    alert (result.message || "Invalid credentials ")
     }
     } catch (error){
       console.error("fetch",error);
       alert ("server connectin faild")
-    }     
+    }
 
     // clear form
     setusername("");

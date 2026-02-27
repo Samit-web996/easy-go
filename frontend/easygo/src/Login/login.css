@@ -1,56 +1,122 @@
-*{
+* {
     padding: 0;
     margin: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-gradient: linear-gradient(135deg, #6366f1, #9333ea);
+    --box-bg: #ffffff;
+    --text-color: #1f2937;
+    --input-bg: #f3f4f6;
+    --input-border: #d1d5db;
+    --input-text: #1f2937;
+}
+
+/* Dark mode configurations */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-gradient: linear-gradient(135deg, #1e1b4b, #4338ca);
+        --box-bg: #1f2937;
+        --text-color: #f3f4f6;
+        --input-bg: #374151;
+        --input-border: #4b5563;
+        --input-text: #ffffff;
+    }
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Screen se bahar kuch nahi jayega */
 }
 
 .page {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg, #6366f1, #9333ea);
-  font-family: Arial, sans-serif;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden; /* Image scale hone par bhi scroll nahi aayega */
+    background-color: #000;
+}
+
+/* Background blur layer */
+.page::before {
+    content: "";
+    position: absolute;
+    /* top: 0;
+    left: 0; */
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), 
+                      url('./ZEPETO BACKGROUND.jpg');
+    background-size: cover;
+    background-position: center;
+    filter: blur(4px);
+    /* z-index: -1; */
+    /* Scale edges ko cover karne ke liye zaruri hai */
+    transform: scale(1); 
 }
 
 .box {
-  width: 360px;
-  background: #ffffff;
-  padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+    width: 90%;
+    max-width: 360px;
+    /* Dark decent look */
+    background: rgba(0, 0, 0, 0.7); 
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    z-index: 1;
+    backdrop-filter: blur(5px); /* Form ke piche halka sa glass look */
 }
 
 .title {
-  text-align: center;
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 22px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 22px;
+    color: #ffffff;
 }
 
 .input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 14px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  /* Box-sizing zaroori hai taaki padding width se bahar na jaye */
-  box-sizing: border-box; 
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    border: 1px solid var(--input-border);
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    font-size: 15px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.input::placeholder {
+    color: #9ca3af;
+}
+
+.input:focus {
+    border-color: #6366f1;
+    background-color: #ffffff;
+    color: #000;
 }
 
 .button {
-  width: 100%;
-  padding: 10px;
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.3s ease;
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .button:hover {
-  opacity: 0.9;
+    opacity: 0.9;
+    transform: translateY(-1px);
 }

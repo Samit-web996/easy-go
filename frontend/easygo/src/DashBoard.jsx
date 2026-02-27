@@ -1,133 +1,99 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Users, Truck, MapPin, DollarSign, Layers } from "lucide-react";
+import { Menu } from "lucide-react";
+import Sidebar from "./Sidebar";
 
-const menuItems = [
-  { name: "STAFF", icon: Users },
-  { name: "UNITS", icon: Layers },
-  { name: "DRIVERS", icon: Truck },
-  { name: "CUSTOMERS", icon: Users },
-  { name: "TRACKING", icon: MapPin },
-  { name: "FINANCIAL", icon: DollarSign },
-];
-
-const dataMap = {
-  STAFF: [
-    { name: "Ravi", status: "Active", performance: 90 },
-    { name: "Amit", status: "Inactive", performance: 60 },
-  ],
-  UNITS: [
-    { name: "Unit 1", status: "Running", performance: 75 },
-    { name: "Unit 2", status: "Stopped", performance: 40 },
-  ],
-  DRIVERS: [
-    { name: "Driver A", status: "On Duty", performance: 88 },
-    { name: "Driver B", status: "Off Duty", performance: 55 },
-  ],
-  CUSTOMERS: [
-    { name: "Customer X", status: "Active", performance: 95 },
-    { name: "Customer Y", status: "Inactive", performance: 50 },
-  ],
-  TRACKING: [
-    { name: "Truck 101", status: "Moving", performance: 80 },
-    { name: "Truck 102", status: "Stopped", performance: 30 },
-  ],
-  FINANCIAL: [
-    { name: "Revenue", status: "Stable", performance: 70 },
-    { name: "Expenses", status: "High", performance: 40 },
-  ],
-};
-
-export default function Dashboard() {
-  const [active, setActive] = useState("STAFF");
-  const data = dataMap[active];
-
+export default function AdminDashboard() {
   return (
-    <div className="w-screen h-screen flex bg-[#020617] text-white overflow-hidden">
-      {/* Sidebar */}
-      <div className="w-72 h-full bg-gradient-to-b from-[#020617] via-[#020617] to-[#020617] border-r border-gray-800 p-6 flex flex-col relative">
-        {/* Glow effect */}
-        <div className="absolute top-0 left-0 w-full h-full bg-purple-600/10 blur-3xl opacity-30"></div>
+    
+    <div className="flex-1 p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
 
-        <h1 className="text-4xl font-extrabold mb-10 leading-tight">
-          🚀 <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-indigo-500 text-transparent bg-clip-text">Premium</span><br />
-          <span className="bg-gradient-to-r from-indigo-400 to-purple-500 text-transparent bg-clip-text">Panel</span>
-        </h1>
+      {/* Top Bar */}
+      <div className="flex items-center justify-between mb-6">
+        <button className="md:hidden">
+          <Menu size={24} className="text-gray-700 dark:text-white" />
+        </button>
 
-        <ul className="space-y-3 relative z-10">
-          {menuItems.map((item) => (
-            <li key={item.name}>
-              <button
-                onClick={() => setActive(item.name)}
-                className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all duration-300 group
-                ${
-                  active === item.name
-                    ? "bg-gradient-to-r from-purple-600 to-indigo-600 shadow-[0_0_20px_rgba(168,85,247,0.6)] scale-[1.03]"
-                    : "bg-white/5 hover:bg-white/10"
-                }`}
-              >
-                <item.icon className="group-hover:scale-110 transition" size={18} />
-                <span className="font-medium tracking-wide">{item.name}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
+        <p className="text-3xl font-bold text-gray-800 dark:text-white">
+          Dashboard Overview
+        </p>
+
+        <div className="w-10 h-10 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 p-10 overflow-y-auto">
-        <motion.h2
-          key={active}
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-5xl font-bold mb-10 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent"
-        >
-          {active} Dashboard
-        </motion.h2>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
 
-        {/* Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          {data.map((item, index) => (
-            <motion.div
-              key={index}
-              whileHover={{ scale: 1.05 }}
-              className="bg-gradient-to-br from-[#0f172a] to-[#020617] border border-gray-800 p-8 rounded-2xl shadow-xl backdrop-blur-xl"
-            >
-              <h3 className="text-xl font-semibold">{item.name}</h3>
-              <p className="text-gray-400 text-sm mt-1">{item.status}</p>
-              <p className="text-3xl font-bold mt-4 text-purple-400">{item.performance}%</p>
-            </motion.div>
-          ))}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
+          <h3 className="text-gray-700 dark:text-gray-300">
+            Total Rental Car
+          </h3>
+          <p className="text-2xl font-bold mt-2 text-gray-900 dark:text-white">
+            1,200
+          </p>
         </div>
 
-        {/* Table */}
-        <div className="bg-[#020617] border border-gray-800 rounded-2xl p-8 shadow-xl backdrop-blur-xl">
-          <h3 className="text-2xl mb-6 font-semibold">{active} Data</h3>
-
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="text-gray-400 border-b border-gray-800">
-                <th className="p-4">Name</th>
-                <th className="p-4">Status</th>
-                <th className="p-4">Performance</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {data.map((row, index) => (
-                <tr
-                  key={index}
-                  className="border-b border-gray-900 hover:bg-white/5 transition"
-                >
-                  <td className="p-4">{row.name}</td>
-                  <td className="p-4">{row.status}</td>
-                  <td className="p-4 text-purple-400 font-semibold">{row.performance}%</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
+          <h3 className="text-gray-700 dark:text-gray-300">
+            Revenue
+          </h3>
+          <p className="text-2xl font-bold mt-2 text-green-600">
+            ₹ 4,25,000
+          </p>
         </div>
+
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
+          <h3 className="text-gray-700 dark:text-gray-300">
+            Active Cars
+          </h3>
+          <p className="text-2xl font-bold mt-2 text-blue-600">
+            320
+          </p>
+        </div>
+
       </div>
+
+      {/* Table Section */}
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow overflow-x-auto">
+        <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">
+          Recent Bookings
+        </h2>
+
+        <table className="w-screen text-left border-collapse">
+          <thead>
+            <tr className="border-b dark:border-gray-600">
+              <th className="py-2 text-orange-600">Client</th>
+              <th className="text-orange-600">Car</th>
+              <th className="text-orange-600">Status</th>
+              <th className="text-orange-600">Amount</th>
+            </tr>
+          </thead>
+
+          <tbody className="text-gray-600 dark:text-gray-300">
+
+            <tr className="border-b dark:border-gray-700">
+              <td className="py-2">Rahul Sharma</td>
+              <td>Hyundai Creta</td>
+              <td className="text-green-600 font-medium">Completed</td>
+              <td>₹ 12,000</td>
+            </tr>
+
+            <tr className="border-b dark:border-gray-700">
+              <td className="py-2">Priya Singh</td>
+              <td>Swift Dzire</td>
+              <td className="text-yellow-600 font-medium">Ongoing</td>
+              <td>₹ 8,500</td>
+            </tr>
+
+            <tr>
+              <td className="py-2">Amit Verma</td>
+              <td>Mahindra XUV</td>
+              <td className="text-red-600 font-medium">Cancelled</td>
+              <td>₹ 0</td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
     </div>
   );
 }
