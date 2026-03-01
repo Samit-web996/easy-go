@@ -1,96 +1,65 @@
-import { Menu } from "lucide-react";
-import Sidebar from "./Sidebar";
-
 export default function AdminDashboard() {
   return (
-    <div className="flex">
-      <div><Sidebar/></div>
-    <div className="flex-1 p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
-
-      
+    <div className="flex-1">
       <div className="flex items-center justify-between mb-6">
-              
-        <p className="text-3xl font-bold text-gray-800 dark:text-white">
+        <h2 className="text-3xl font-bold text-gray-800 dark:text-white">
           Dashboard Overview
-        </p>
-
-        <div className="w-10 h-10 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
+        </h2>
+        <div className="w-10 h-10 bg-zinc-800 rounded-full flex items-center justify-center border border-zinc-700">
+          <span className="text-xs font-bold text-white">AD</span>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
-          <h3 className="text-gray-700 dark:text-gray-300">
-            Total Rental Car
-          </h3>
-          <p className="text-2xl font-bold mt-2 text-gray-900 dark:text-white">
-            1,200
-          </p>
+        <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-xl shadow-sm">
+          <h3 className="text-gray-400">Total Rental Car</h3>
+          <p className="text-2xl font-bold mt-2 text-white">1,200</p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
-          <h3 className="text-gray-700 dark:text-gray-300">
-            Revenue
-          </h3>
-          <p className="text-2xl font-bold mt-2 text-green-600">
-            ₹ 4,25,000
-          </p>
+        <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-xl shadow-sm">
+          <h3 className="text-gray-400">Revenue</h3>
+          <p className="text-2xl font-bold mt-2 text-emerald-500">₹ 4,25,000</p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
-          <h3 className="text-gray-700 dark:text-gray-300">
-            Active Cars
-          </h3>
-          <p className="text-2xl font-bold mt-2 text-blue-600">
-            320
-          </p>
+        <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-xl shadow-sm">
+          <h3 className="text-gray-400">Active Cars</h3>
+          <p className="text-2xl font-bold mt-2 text-blue-500">320</p>
         </div>
-
       </div>
 
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow overflow-x-auto">
-        <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">
-          Recent Bookings
-        </h2>
-
-        <table className="w-full text-left border-collapse">
+      <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-xl shadow-sm overflow-x-auto">
+        <h2 className="text-xl font-semibold mb-4 text-white">Recent Bookings</h2>
+        <table className="w-full text-left border-collapse min-w-[500px]">
           <thead>
-            <tr className="border-b dark:border-gray-600">
-              <th className="py-2 text-orange-600">Client</th>
-              <th className="text-orange-600">Car</th>
-              <th className="text-orange-600">Status</th>
-              <th className="text-orange-600">Amount</th>
+            <tr className="border-b border-zinc-800">
+              <th className="py-3 text-emerald-500 font-medium">Client</th>
+              <th className="py-3 text-emerald-500 font-medium">Car</th>
+              <th className="py-3 text-emerald-500 font-medium">Status</th>
+              <th className="py-3 text-emerald-500 font-medium">Amount</th>
             </tr>
           </thead>
-
-          <tbody className="text-gray-600 dark:text-gray-300">
-
-            <tr className="border-b dark:border-gray-700">
-              <td className="py-2">Rahul Sharma</td>
+          <tbody className="text-gray-300">
+            <tr className="border-b border-zinc-800 hover:bg-zinc-800/50 transition-colors">
+              <td className="py-4">Rahul Sharma</td>
               <td>Hyundai Creta</td>
-              <td className="text-green-600 font-medium">Completed</td>
+              <td><span className="px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-500 text-xs font-medium border border-emerald-500/20">Completed</span></td>
               <td>₹ 12,000</td>
             </tr>
-
-            <tr className="border-b dark:border-gray-700">
-              <td className="py-2">Priya Singh</td>
+            <tr className="border-b border-zinc-800 hover:bg-zinc-800/50 transition-colors">
+              <td className="py-4">Priya Singh</td>
               <td>Swift Dzire</td>
-              <td className="text-yellow-600 font-medium">Ongoing</td>
+              <td><span className="px-2 py-1 rounded-full bg-amber-500/10 text-amber-500 text-xs font-medium border border-amber-500/20">Ongoing</span></td>
               <td>₹ 8,500</td>
             </tr>
-
-            <tr>
-              <td className="py-2">Amit Verma</td>
+            <tr className="hover:bg-zinc-800/50 transition-colors">
+              <td className="py-4">Amit Verma</td>
               <td>Mahindra XUV</td>
-              <td className="text-red-600 font-medium">Cancelled</td>
+              <td><span className="px-2 py-1 rounded-full bg-red-500/10 text-red-500 text-xs font-medium border border-red-500/20">Cancelled</span></td>
               <td>₹ 0</td>
             </tr>
-
           </tbody>
         </table>
       </div>
-
-    </div>
     </div>
   );
 }
