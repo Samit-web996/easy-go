@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AddEmployeeModal from "./modal";  
+import Sidebar from "../Sidebar";
 
 function Employee() {
   const [data, setData] = useState([]);
@@ -17,10 +18,12 @@ function Employee() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-orange-100 dark:bg-black p-6 transition-colors duration-300">
+    <div className="flex"> 
+      <div><Sidebar/></div>
+    <div className=" bg-orange-100 p-6 dark:bg-gray-900 min-h-screen">
       
       
-      <div className="w-screen bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 transition-colors duration-300">
+      <div className=" bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 transition-colors duration-300">
       <button 
         onClick={() => setModalOpen(true)} 
         className="bg-purple-600 text-white rounded-md h-10 w-35"
@@ -76,6 +79,7 @@ function Employee() {
         </div>
 
       </div>
+    </div>
     </div>
   );
 }

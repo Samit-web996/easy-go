@@ -3,15 +3,13 @@ import Sidebar from "./Sidebar";
 
 export default function AdminDashboard() {
   return (
-    
+    <div className="flex">
+      <div><Sidebar/></div>
     <div className="flex-1 p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
 
-      {/* Top Bar */}
+      
       <div className="flex items-center justify-between mb-6">
-        <button className="md:hidden">
-          <Menu size={24} className="text-gray-700 dark:text-white" />
-        </button>
-
+              
         <p className="text-3xl font-bold text-gray-800 dark:text-white">
           Dashboard Overview
         </p>
@@ -19,7 +17,6 @@ export default function AdminDashboard() {
         <div className="w-10 h-10 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
       </div>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
 
         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
@@ -51,13 +48,12 @@ export default function AdminDashboard() {
 
       </div>
 
-      {/* Table Section */}
       <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow overflow-x-auto">
         <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">
           Recent Bookings
         </h2>
 
-        <table className="w-screen text-left border-collapse">
+        <table className="w-full text-left border-collapse">
           <thead>
             <tr className="border-b dark:border-gray-600">
               <th className="py-2 text-orange-600">Client</th>
@@ -94,6 +90,7 @@ export default function AdminDashboard() {
         </table>
       </div>
 
+    </div>
     </div>
   );
 }
