@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {toast} from "react-toastify" ;
+import 'react-toastify/dist/ReactToastify.css';
 import './login.css'
 //  import {Link} from 'react-router-dom'
 //  import Signup from "./signUp";
@@ -12,7 +14,10 @@ function Login() {
 
   const postdata = async () => {
     if (!username || !password) {
-      alert("All fields are required ❌");
+      toast.error("All field are required !!!", {
+        position : "top-right",
+        autoClose : 2000
+      });
       return;
     }
     try{
@@ -28,15 +33,24 @@ function Login() {
     const result = await res.json();
     console.log(res.status , result);
     if(res.ok) {
-      alert("Login Successful ");
+      toast.success(result.message || "Login successful...", {
+        position:"top-right",
+        autoClose: 2000,
+      });
       navigate("/admin")
     }else{
 
-    alert (result.message || "Invalid credentials ")
+    toast.error(result.message || "Invalid credentials ", {
+      position:"top-right",
+      autoClose: 2000
+    });   
     }
     } catch (error){
       console.error("fetch",error);
-      alert ("server connectin faild")
+      toast.error("Something went wrong. Please try again later.", {
+        position:"top-right",
+        autoClose: 2000
+      });
     }
 
     // clear form
@@ -68,6 +82,8 @@ function Login() {
         <button onClick={postdata} className="button">
           Log In
         </button>
+        
+         
       </div>
     </div>
   )

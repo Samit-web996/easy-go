@@ -15,7 +15,7 @@ const modalRouter = require('./Route/employeeRoutea/modalRoute')
 app.use('/', modalRouter)
 
 
-port = 3006
+port = 3006;
 
 
 app.listen(port, () => {

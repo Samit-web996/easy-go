@@ -1,14 +1,14 @@
 const database = require('../../Model/dbConnect');
 
 const addEmployees = (req, res) => {
-      const {eid, ename , mobile , email , salary , DOJ } = req.body;
+      const {eid, name,addhar, mobile,address, email,joining_Date, salary } = req.body;
 
       if (!eid || eid === "") {
     return res.status(400).json({ message: "Employee ID zaroori hai bhai!" });
 }
 
-      const sql = "INSERT INTO employee (eid,ename , mobile , email , salary , DOJ) VALUES (?, ?, ?, ?, ?,?)";
-      const values = [eid,ename, mobile, email, salary, DOJ];
+      const sql = "INSERT INTO employee (eid, name,addhar, mobile,address, email,joining_Date, salary) VALUES (?, ?, ?,?,?, ?, ?,?)";
+      const values = [eid, name,addhar, mobile,address, email,joining_Date, salary];
 
       database.query(sql , values , (err , result) =>{
             if(err){

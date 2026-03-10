@@ -5,9 +5,6 @@ export default function AdminDashboard() {
         <h2 className="text-3xl font-bold text-gray-800 dark:text-white">
           Dashboard Overview
         </h2>
-        <div className="w-10 h-10 bg-zinc-800 rounded-full flex items-center justify-center border border-zinc-700">
-          <span className="text-xs font-bold text-white">AD</span>
-        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
@@ -29,7 +26,7 @@ export default function AdminDashboard() {
 
       <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-xl shadow-sm overflow-x-auto">
         <h2 className="text-xl font-semibold mb-4 text-white">Recent Bookings</h2>
-        <table className="w-full text-left border-collapse min-w-[500px]">
+        <table className="w-full text-left border-collapse">
           <thead>
             <tr className="border-b border-zinc-800">
               <th className="py-3 text-emerald-500 font-medium">Client</th>
