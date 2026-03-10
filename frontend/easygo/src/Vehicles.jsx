@@ -9,12 +9,14 @@ function Vehicles() {
         <div className='text-blue-500 space-y-4 text-lg'>
           <p>Vehicle management system coming soon...</p>
           <div className='p-4 bg-zinc-800/50 rounded-lg border border-zinc-700 text-sm text-gray-400'>
-            <p>Bhai, child routes setup completed. Ab dashboard aur employee table correctly display honge.</p>
+            <p>Data was exporting from out of the world, PLEASE WAIT!!!</p>
           </div>
         </div>
       </div>
     </div>
   )
 }
+
+
 
 export default Vehicles

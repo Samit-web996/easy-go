@@ -23,13 +23,6 @@ const AdminNavbar = ({ toggleSidebar }) => {
             <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-[10px] font-bold">AD</div>
             <span className="text-sm font-medium">Admin</span>
           </div>
-
-          <Link to="/">
-            <button className="flex items-center gap-2 bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-all border border-red-600/20">
-              <LogOut size={16} />
-              <span className="hidden xs:inline">Logout</span>
-            </button>
-          </Link>
         </div>
       </div>
     </nav>

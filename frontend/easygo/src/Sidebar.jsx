@@ -22,7 +22,10 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
         
         {/* Logo/Title Area */}
         <div className="flex items-center justify-between p-6 h-16 border-b border-zinc-800 shrink-0">
-          <span className="text-xl font-bold text-white tracking-tight">EasyGo Admin</span>
+          <div>
+          <span className="text-3xl font-bold text-sky-500">EasyGo</span><span className="text-3xl font-bold text-white tracking-tight">Admin</span>
+
+          </div>
           <button onClick={toggleSidebar} className="md:hidden text-gray-400 hover:text-white transition-colors">
             <X size={24} />
           </button>
@@ -38,7 +41,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                 isActive ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20" : "text-gray-400 hover:bg-zinc-800 hover:text-white"
               }`
             }
-          >
+          ><br /><br />
             <LayoutDashboard size={20} />
             <span className="font-medium">Dashboard</span>
           </NavLink>
@@ -51,7 +54,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                 isActive ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20" : "text-gray-400 hover:bg-zinc-800 hover:text-white"
               }`
             }
-          >
+          ><br /><br />
             <Users size={20} />
             <span className="font-medium">Employees</span>
           </NavLink>
@@ -64,7 +67,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                 isActive ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20" : "text-gray-400 hover:bg-zinc-800 hover:text-white"
               }`
             }
-          >
+          ><br /><br />
             <Car size={20} />
             <span className="font-medium">Vehicles</span>
           </NavLink>
@@ -77,16 +80,16 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                 isActive ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20" : "text-gray-400 hover:bg-zinc-800 hover:text-white"
               }`
             }
-          >
+          ><br /><br /> 
             <BarChart3 size={20} />
             <span className="font-medium">Financial</span>
           </NavLink>
         </nav>
 
-        {/* Logout */}
+       
         <div className="p-4 border-t border-zinc-800 mt-auto shrink-0">
           <NavLink to="/">
-            <button className="flex items-center gap-3 w-full p-3 text-gray-400 rounded-xl hover:bg-red-500 hover:text-white transition-all duration-200 group">
+            <button className="flex items-center gap-3 h-10 w-full p-3 text-gray-400 rounded-xl hover:bg-red-500 hover:text-white transition-all duration-200 group">
               <LogOut size={20} className="group-hover:scale-110 transition-transform" />
               <span className="font-medium">Logout</span>
             </button>
