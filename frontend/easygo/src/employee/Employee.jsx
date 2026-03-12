@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import AddEmployeeModal from "./modal";  
+import EmployeeTable from "./EmployeeTable";
 
 function Employee() {
-  const [data, setData] = useState([]);
+  // const [data, setData] = useState([]);
   const [ModalOpen, setModalOpen] = useState(false);
 
   const fetchEmployees = () => {
     fetch("http://localhost:3006/employees")
       .then(res => res.json())
-      .then(data => setData(data))
+      // .then(data => setData(data))
       .catch(err => console.error(err));
   };
 
@@ -16,23 +17,23 @@ function Employee() {
     fetchEmployees();
   }, []);
   
-  const handleRoleChange = async (eid, role) => {
-  try {
-    const res = await fetch("http://localhost:3006/update-role", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ eid, role })
-    });
+//   const handleRoleChange = async (eid, role) => {
+//   try {
+//     const res = await fetch("http://localhost:3006/update-role", {
+//       method: "PUT",
+//       headers: {
+//         "Content-Type": "application/json"
+//       },
+//       body: JSON.stringify({ eid, role })
+//     });
 
-    const result = await res.json();
-    console.log(result);
-    fetchEmployees();
-  } catch (error) {
-    console.error("Update failed", error);
-  }
-};
+//     const result = await res.json();
+//     console.log(result);
+//     fetchEmployees();
+//   } catch (error) {
+//     console.error("Update failed", error);
+//   }
+// };
 
 
   return (
@@ -69,8 +70,9 @@ function Employee() {
         onClose={() => setModalOpen(false)} 
         onSuccess={fetchEmployees}
       />
+    <EmployeeTable />
 
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl shadow-sm overflow-hidden">
+      {/* <div className="bg-zinc-900 border border-zinc-800 rounded-xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-800px">
             <thead className="bg-zinc-800/50">
@@ -149,7 +151,7 @@ function Employee() {
             </tbody>
           </table>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

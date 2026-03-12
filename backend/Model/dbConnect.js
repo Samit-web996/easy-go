@@ -1,13 +1,14 @@
 const mysql = require('mysql2')
-// console.log("DB User:", process.env.DB_USER);
+const dotenv = require('dotenv');
 
+dotenv.config();
 
 const conn = mysql.createConnection({
-    user : 'root' ,
-    host : 'localhost',
-    port : 3306,
-    database : 'easygo',
-    password : 'Bobby@1234'
+    user : process.env.DB_USER,
+    host : process.env.DB_HOST,
+    port :  process.env.DB_PORT,
+    database : process.env.DB_NAME,
+    password : process.env.DB_PASSWORD
 });
 
 conn.connect((err)=>{

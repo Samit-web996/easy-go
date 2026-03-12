@@ -7,6 +7,7 @@ import AdminDashboard from "./DashBoard";
 import AdminLayout from "./AdminLayout";
 import Financial from "./Financial";
 import { ToastContainer } from "react-toastify";
+// import "./App.css";
 
 function App() {
   return (

@@ -25,11 +25,12 @@ const AddEmployeeModal = ({ isOpen, onClose, onSuccess }) => {
     e.preventDefault();
     try {
       await axios.post("http://localhost:3006/add-employee", employee);
-      if (onSuccess) onSuccess();
+      if (onSuccess){onSuccess();}
       toast.success("Employee profile created successfully!", {
         position: "top-right",
         autoClose: 2000,
       });
+      onSuccess()
       onClose();
       setEmployee({
         eid: "",
@@ -74,12 +75,18 @@ const AddEmployeeModal = ({ isOpen, onClose, onSuccess }) => {
     "Backend Developer",
   ];
 
-  // const handleChange = (e) => {
-  //   setEmployee({
-  //     ...employee,
-  //     [e.target.name]: e.target.value
-  //   });
-  // };
+  //  const handleRoleChange = async (eid, role) => {
+  //     try {
+  //       const res = await fetch("http://localhost:3006/update-role", {
+  //         method: "PUT",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify({ eid, role }),
+  //       });
+  //       if (!res.ok) throw new Error("Update failed");
+  //     } catch (err) {
+  //       console.error("Role update failed:", err.message);
+  //     }
+  //   };
 
   return (
     <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
@@ -220,14 +227,14 @@ const AddEmployeeModal = ({ isOpen, onClose, onSuccess }) => {
 
                   <select
                     name="role"
-                    required
-                    className="bg-zinc-800 border border-zinc-800 text-white rounded-lg p-1 outline-none"
-                    onChange={handleChange}
                     value={employee.role}
+                    required
+                    onChange={handleChange}
+                    className="bg-zinc-800 border border-zinc-800 text-white rounded-lg p-1 outline-none"
                   >
-                    
+                    <option value="">Select Role</option>
 
-                    {roles.map((role, index) => (
+                    {roles.slice(1).map((role, index) => (
                       <option key={index} value={role}>
                         {role}
                       </option>
