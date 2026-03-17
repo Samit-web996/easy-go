@@ -1,9 +1,7 @@
 const express = require('express');
 const modalRouter = express.Router();
-const {addEmployees, getEmployees} = require('../../Controller/employeeController/employeeModal');
+const {addEmployees, getEmployees} = require('../../../Controller/Admin/employeeController/employeeModal');
 
-
-console.log("Handler Function:", addEmployees);
 modalRouter.post('/add-employee', addEmployees);
 modalRouter.get('/get-employees', getEmployees);     
 

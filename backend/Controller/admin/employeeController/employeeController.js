@@ -1,4 +1,5 @@
-const conn = require('../../Model/dbConnect');
+const conn = require('../../../Model/dbConnect')
+
 
 const getEmployees = (req, res) => {      
       const sql = "SELECT * FROM employee";

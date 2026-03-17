@@ -10,7 +10,7 @@ const AddEmployeeModal = ({ isOpen, onClose, onSuccess }) => {
     mobile: "",
     address: "",
     email: "",
-    role: "",
+    roleid: "",
     joining_Date: "",
     salary: "",
   });
@@ -25,12 +25,14 @@ const AddEmployeeModal = ({ isOpen, onClose, onSuccess }) => {
     e.preventDefault();
     try {
       await axios.post("http://localhost:3006/add-employee", employee);
-      if (onSuccess){onSuccess();}
+      if (onSuccess) {
+        onSuccess();
+      }
       toast.success("Employee profile created successfully!", {
         position: "top-right",
         autoClose: 2000,
       });
-      onSuccess()
+      onSuccess();
       onClose();
       setEmployee({
         eid: "",
@@ -39,7 +41,7 @@ const AddEmployeeModal = ({ isOpen, onClose, onSuccess }) => {
         mobile: "",
         address: "",
         email: "",
-        role: "",
+        roleid: "",
         joining_Date: "",
         salary: "",
       });
@@ -167,7 +169,6 @@ const AddEmployeeModal = ({ isOpen, onClose, onSuccess }) => {
             </div>
           </section>
           <section className="space-y-8">
-            {/* <h4 className="text-[11px] font-black text-indigo-500 uppercase tracking-[0.2em] border-b border-slate-100 dark:border-white/5 pb-2">Identity Details</h4> */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               <div className="space-y-3 ">
                 <label className="text-sm font-bold text-slate-700 dark:text-slate-300">
@@ -220,22 +221,28 @@ const AddEmployeeModal = ({ isOpen, onClose, onSuccess }) => {
                     className="w-full bg-white dark:bg-[#161618] border-2 border-slate-100 dark:border-white/5 rounded-xl px-6 py-4 text-slate-800 dark:text-white focus:border-indigo-500 focus:ring-0 transition-all outline-none"
                   />
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <label className="block text-sm font-bold text-slate-700 dark:text-slate-300">
                     Role
                   </label>
 
                   <select
                     name="role"
-                    value={employee.role}
+                    value={employee.roleid}
                     required
                     onChange={handleChange}
-                    className="bg-zinc-800 border border-zinc-800 text-white rounded-lg p-1 outline-none"
+                    className="w-full bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 text-slate-900 dark:text-white rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   >
-                    <option value="">Select Role</option>
+                    <option value="" className="text-slate-500">
+                      Select Role
+                    </option>
 
                     {roles.slice(1).map((role, index) => (
-                      <option key={index} value={role}>
+                      <option
+                        key={index}
+                        value={role}
+                        className="bg-white dark:bg-zinc-800 text-slate-900 dark:text-white"
+                      >
                         {role}
                       </option>
                     ))}

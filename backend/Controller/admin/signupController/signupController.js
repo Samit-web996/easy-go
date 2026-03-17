@@ -1,4 +1,4 @@
-const conn = require('../../Model/dbConnect')
+const conn = require('../../../Model/dbConnect')
 const bcrypt = require('bcrypt')
 
 const signupUser = async (req, res) => {

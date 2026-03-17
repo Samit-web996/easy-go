@@ -1,14 +1,14 @@
-const database = require('../../Model/dbConnect');
+const database = require('../../../Model/dbConnect')
 
 const addEmployees = (req, res) => {
-      const {eid, name,addhar, mobile,address, email,joining_Date,role, salary } = req.body;
+      const {eid, name,addhar, mobile,address, email,joining_Date,roleid, deptid, salary } = req.body;
 
       if (!eid || eid === "") {
     return res.status(400).json({ message: "Employee ID must be provided!" });
 }
 
-      const sql = "INSERT INTO employee (eid, name,addhar, mobile,address, email,joining_Date,role, salary) VALUES (?, ?, ?,?,?, ?, ?,?,?)";
-      const values = [eid, name,addhar, mobile,address, email,joining_Date,role, salary];
+      const sql = "INSERT INTO employee (eid, name,addhar, mobile,address, email,joining_Date,roleid,deptid, salary) VALUES (?,? ?, ?,?,?, ?, ?,?,?)";
+      const values = [eid, name,addhar, mobile,address, email,joining_Date,roleid,deptid, salary];
 
       database.query(sql , values , (err , result) =>{
             if(err){

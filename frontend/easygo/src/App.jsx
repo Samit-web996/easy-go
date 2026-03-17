@@ -3,7 +3,7 @@ import Login from "./Login/Login";
 import Employee from "./employee/Employee";
 import AddEmployeeModal from "./employee/modal";
 import Vehicles from "./Vehicles";
-import AdminDashboard from "./DashBoard";
+import AdminDashboard from "./Dashboard/DashBoard";
 import AdminLayout from "./AdminLayout";
 import Financial from "./Financial";
 import { ToastContainer } from "react-toastify";

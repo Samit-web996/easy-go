@@ -99,8 +99,6 @@ export default function EmployeeTable() {
 
   // ─── Role update ─────────────────────────────────────────────────────────────
   const handleRoleChange = async (eid, role) => {
-
-  // 🔹 UI instantly update without table reload
   setData((prevData) =>
     prevData.map((emp) =>
       emp.eid === eid ? { ...emp, role: role } : emp
