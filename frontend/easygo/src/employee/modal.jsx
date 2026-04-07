@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 
@@ -6,19 +6,48 @@ const AddEmployeeModal = ({ isOpen, onClose, onSuccess }) => {
   const [employee, setEmployee] = useState({
     eid: "",
     name: "",
-    addhar: "",
+    aadhar: "",
     mobile: "",
     address: "",
     email: "",
     roleid: "",
+    deptid: "",
     joining_Date: "",
     salary: "",
   });
+
+  const [roles, setRole] = useState([]);
+  useEffect(() => {
+    const fetchrole = async () => {
+      try {
+        const response = await axios.get("http://localhost:3006/get-role");
+        setRole(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchrole();
+  }, []);
+
+  const [dept, setDept] = useState([]);
+
+  useEffect(() => {
+    const fetchDept = async () => {
+      try {
+        const response = await axios.get("http://localhost:3006/get-dept");
+        setDept(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchDept();
+  }, []);
 
   if (!isOpen) return null;
 
   const handleChange = (e) => {
     setEmployee({ ...employee, [e.target.name]: e.target.value });
+    console.log(employee);
   };
 
   const handleSubmit = async (e) => {
@@ -32,16 +61,17 @@ const AddEmployeeModal = ({ isOpen, onClose, onSuccess }) => {
         position: "top-right",
         autoClose: 2000,
       });
-      onSuccess();
+      // onSuccess();
       onClose();
       setEmployee({
         eid: "",
         name: "",
-        addhar: "",
+        aadhar: "",
         mobile: "",
         address: "",
         email: "",
         roleid: "",
+        deptid: "",
         joining_Date: "",
         salary: "",
       });
@@ -53,29 +83,6 @@ const AddEmployeeModal = ({ isOpen, onClose, onSuccess }) => {
       });
     }
   };
-  const roles = [
-    "Select Role",
-    "Admin",
-    "Finance Manager",
-    "Payroll Executive",
-    "Account Executive",
-    "Chartered Accountant",
-    "Manager",
-    "Digital Marketing Executive",
-    "Social Media Executive",
-    "Marketing Executive",
-    "Booking Management",
-    "Drivers Manager",
-    "Drivers",
-    "Vehicle Manager",
-    "Vehicle Engineer",
-    "Mechanic",
-    "Hiring Staff",
-    "Hiring Driver",
-    "Frontend Developer",
-    "App Developer",
-    "Backend Developer",
-  ];
 
   //  const handleRoleChange = async (eid, role) => {
   //     try {
@@ -172,15 +179,15 @@ const AddEmployeeModal = ({ isOpen, onClose, onSuccess }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               <div className="space-y-3 ">
                 <label className="text-sm font-bold text-slate-700 dark:text-slate-300">
-                  Addhar Number
+                  aadhar Number
                 </label>
                 <input
                   type="number"
-                  name="addhar"
+                  name="aadhar"
                   required
                   onChange={handleChange}
-                  value={employee.addhar}
-                  placeholder="Addhar Number"
+                  value={employee.aadhar}
+                  placeholder="aadhar Number"
                   className="w-full bg-white dark:bg-[#161618] border-2 border-slate-100 dark:border-white/5 rounded-xl px-6 py-4 text-slate-800 dark:text-white focus:border-indigo-500 focus:ring-0 transition-all outline-none"
                 />
               </div>
@@ -221,33 +228,6 @@ const AddEmployeeModal = ({ isOpen, onClose, onSuccess }) => {
                     className="w-full bg-white dark:bg-[#161618] border-2 border-slate-100 dark:border-white/5 rounded-xl px-6 py-4 text-slate-800 dark:text-white focus:border-indigo-500 focus:ring-0 transition-all outline-none"
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-bold text-slate-700 dark:text-slate-300">
-                    Role
-                  </label>
-
-                  <select
-                    name="role"
-                    value={employee.roleid}
-                    required
-                    onChange={handleChange}
-                    className="w-full bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 text-slate-900 dark:text-white rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  >
-                    <option value="" className="text-slate-500">
-                      Select Role
-                    </option>
-
-                    {roles.slice(1).map((role, index) => (
-                      <option
-                        key={index}
-                        value={role}
-                        className="bg-white dark:bg-zinc-800 text-slate-900 dark:text-white"
-                      >
-                        {role}
-                      </option>
-                    ))}
-                  </select>
-                </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                 <div className="space-y-3">
@@ -281,23 +261,87 @@ const AddEmployeeModal = ({ isOpen, onClose, onSuccess }) => {
               </div>
             </div>
           </section>
+          <section>
+            <h4 className="text-[11px] font-black text-indigo-500 uppercase tracking-[0.2em] border-b border-slate-100 dark:border-white/5 pb-2">
+              Professional Position
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              <div className="space-y-2">
+                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300">
+                  Department
+                </label>
+
+                <select
+                  name="deptid"
+                  required
+                  onChange={handleChange}
+                  value={employee.deptid}
+                  className="w-full bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 text-slate-900 dark:text-white rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                >
+                  <option value="" className="text-slate-500">
+                    Select Department
+                  </option>
+
+                  {dept.map((department, index) => (
+                    <option
+                      key={index}
+                      value={department.deptid}
+                      className="bg-white dark:bg-zinc-800 text-slate-900 dark:text-white"
+                    >
+                      {department.deptname}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300">
+                  Role
+                </label>
+
+                <select
+                  name="roleid"
+                  value={employee.roleid}
+                  onChange={handleChange}
+                  required
+                  className="w-full bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 text-slate-900 dark:text-white rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                >
+                  <option value="" className="text-slate-500">
+                    Select Role
+                  </option>
+
+                  {roles.map((role, index) => (
+                    <option
+                      required
+                      key={index}
+                      value={role.roleid}
+                      className="bg-white dark:bg-zinc-800 text-slate-900 dark:text-white"
+                    >
+                      {role.rolename}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </section>
 
           <section className="space-y-8">
             <h4 className="text-[11px] font-black text-indigo-500 uppercase tracking-[0.2em] border-b border-slate-100 dark:border-white/5 pb-2">
               Administrative Info
             </h4>
-            <div className="space-y-3">
-              <label className="text-sm font-bold text-slate-700 dark:text-slate-300">
-                Date of Joining
-              </label>
-              <input
-                type="date"
-                name="joining_Date"
-                required
-                onChange={handleChange}
-                value={employee.joining_Date}
-                className="w-full bg-white dark:bg-[#161618] border-2 border-slate-100 dark:border-white/5 rounded-xl px-6 py-4 text-slate-800 dark:text-white focus:border-indigo-500 focus:ring-0 transition-all outline-none cursor-pointer"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              <div className="space-y-3">
+                <label className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                  Date of Joining
+                </label>
+                <input
+                  type="date"
+                  name="joining_Date"
+                  required
+                  onChange={handleChange}
+                  value={employee.joining_Date}
+                  className="w-full bg-white dark:bg-[#161618] border-2 border-slate-100 dark:border-white/5 rounded-xl px-6 py-4 text-slate-800 dark:text-white focus:border-indigo-500 focus:ring-0 transition-all outline-none cursor-pointer"
+                />
+              </div>
             </div>
           </section>
         </form>

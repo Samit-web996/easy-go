@@ -1,7 +1,17 @@
 import { Menu, X, LayoutDashboard, Users, BarChart3, LogOut, Car } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import useAuthStores from "./store/authStore";
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
+
+  const logout = useAuthStores((state)=> state.logout);
+const navigate = useNavigate();
+
+const handlelogout = ()=>{
+  logout()
+  navigate('/')
+}
+  
   return (
     <>
       {/* Mobile Overlay */}
@@ -116,7 +126,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
         {/* Logout */}
         <div className="p-4 border-t border-gray-200 dark:border-zinc-800 mt-auto">
           <NavLink to="/">
-            <button className="flex items-center gap-3 h-10 w-full p-3 text-gray-600 dark:text-gray-400 rounded-xl hover:bg-red-500 hover:text-white transition-all duration-200 group">
+            <button onClick={handlelogout} className="flex items-center gap-3 h-10 w-full p-3 text-gray-600 dark:text-gray-400 rounded-xl hover:bg-red-500 hover:text-white transition-all duration-200 group">
               <LogOut
                 size={20}
                 className="group-hover:scale-110 transition-transform"

@@ -1,68 +1,60 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {toast} from "react-toastify" ;
-import 'react-toastify/dist/ReactToastify.css';
-import './login.css'
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "./login.css";
+import useAuthStores from "../store/authStore";
 //  import {Link} from 'react-router-dom'
 //  import Signup from "./signUp";
-
 
 function Login() {
   const [username, setusername] = useState("");
   const [password, setpassword] = useState("");
+  const setToken = useAuthStores((state) => state.setToken);
   const navigate = useNavigate();
 
   const postdata = async () => {
-    if (!username || !password) {
-      toast.error("All field are required !!!", {
-        position : "top-right",
-        autoClose : 2000
-      });
-      return;
-    }
-    try{
-
+    // if (!username || !password) {
+    //   toast.error("All field are required !!!", {
+    //     position: "top-right",
+    //     autoClose: 2000,
+    //   });
+    //   return;
+    // }
+    try {
     let data = { username, password };
 
-    const res = await fetch("http://localhost:3006/login", {
+    const res = await fetch("http://localhost:3006/admin/adminlogin", {
       method: "POST",
-      headers: {"Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json" },
+      credentials : 'include',
       body: JSON.stringify(data),
     });
 
-    const result = await res.json();
-    console.log(res.status , result);
-    if(res.ok) {
-      toast.success(result.message || "Login successful...", {
-        position:"top-right",
-        autoClose: 2000,
-      });
-      navigate("/admin")
-    }else{
+    const data1 = await res.json();
 
-    toast.error(result.message || "Invalid credentials ", {
-      position:"top-right",
-      autoClose: 2000
-    });   
+    if (res.ok && data1.token) {
+      setToken(data1.token);
+      toast.success("Login successful");
+      navigate("/admin");
+    } else {
+      toast.error(data1.message || "Invalid credentials");
     }
-    } catch (error){
-      console.error("fetch",error);
-      toast.error("Something went wrong. Please try again later.", {
-        position:"top-right",
-        autoClose: 2000
-      });
-    }
+  } catch (error) {
+    console.error(error);
+    toast.error("Server error");
+  }
+};
 
     // clear form
-    setusername("");
-    setpassword("");
-  };
+    // setusername("");
+    // setpassword("");
+  
 
   return (
     <div className="page">
       <div className="box">
-        <h2 className="title">Admin Log In</h2>
-{/* <h1 className=""></h1> */}
+        <h2 className="title">Admin LogIn</h2>
 
         <input
           type="text"
@@ -82,13 +74,9 @@ function Login() {
         <button onClick={postdata} className="button">
           Log In
         </button>
-        
-         
       </div>
     </div>
-  )
-    };
-
-
+  );
+}
 
 export default Login;
