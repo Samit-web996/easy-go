@@ -6,6 +6,7 @@ import {
   TableHead,
   TableRow,
   TablePagination,
+  Button,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -17,12 +18,32 @@ export default function RegisteredVehicles() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [open, setOpen] = useState(false);
-    const [selectedRow, setSelectedRow] = useState(null);
-  
-    const handleNameClick = (row) => {
-      setSelectedRow(row);
-      setOpen(true);
-    };
+  const [selectedRow, setSelectedRow] = useState(null);
+
+  const handleToggleStatus = async (row) => {
+    try {
+      const newStatus =
+        row.status === "AVAILABLE" ? "UNAVAILABLE" : "AVAILABLE";
+
+      await axios.post("http://localhost:3006/update-vehicle-status", {
+        carid: row.carid,
+        status: newStatus,
+      });
+      
+      setRows((prev) =>
+        prev.map((item) =>
+          item.carid === row.carid ? { ...item, status: newStatus } : item,
+        ),
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleNameClick = (row) => {
+    setSelectedRow(row);
+    setOpen(true);
+  };
 
   useEffect(() => {
     const getVehicleTable = async () => {
@@ -49,48 +70,49 @@ export default function RegisteredVehicles() {
   );
 
   return (
-    <div className="  rounded-lg 
+    <div
+      className="  rounded-lg 
   border 
   border-gray-300 dark:border-gray-700
   bg-white dark:bg-gray-800
   transition
-">
+"
+    >
       {/* Title */}
       <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
         Vehicle Request List
       </h2>
 
       {/* Search */}
-  <TextField
-  label="Registration number"
-  variant="outlined"
-  fullWidth
-  size="small"
-  onChange={(e) => setSearch(e.target.value)}
-  className="mb-4"
-  sx={{
-    "& .MuiOutlinedInput-root": {
-      backgroundColor: "#fff",
-    },
-    ".dark & .MuiOutlinedInput-root": {
-      backgroundColor: "#1f2937",
-      color: "white",
-    },
-    "& .MuiInputLabel-root": {
-      color: "black",
-    },
-    ".dark & .MuiInputLabel-root": {
-      color: "white",
-    },
-    "& .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#d1d5db", 
-    },
-    ".dark & .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#374151",
-    }
-  }}
-/>
-
+      <TextField
+        label="Registration number"
+        variant="outlined"
+        fullWidth
+        size="small"
+        onChange={(e) => setSearch(e.target.value)}
+        className="mb-4"
+        sx={{
+          "& .MuiOutlinedInput-root": {
+            backgroundColor: "#fff",
+          },
+          ".dark & .MuiOutlinedInput-root": {
+            backgroundColor: "#1f2937",
+            color: "white",
+          },
+          "& .MuiInputLabel-root": {
+            color: "black",
+          },
+          ".dark & .MuiInputLabel-root": {
+            color: "white",
+          },
+          "& .MuiOutlinedInput-notchedOutline": {
+            borderColor: "#d1d5db",
+          },
+          ".dark & .MuiOutlinedInput-notchedOutline": {
+            borderColor: "#374151",
+          },
+        }}
+      />
 
       {/* Table */}
       <div className="rounded-lg overflow-hidden border border-gray-300 dark:border-gray-700">
@@ -100,11 +122,12 @@ export default function RegisteredVehicles() {
               {[
                 "Name",
                 "Email",
+                "Registeration Number",
                 "Car Name",
                 "Brand",
                 "Seats",
                 "Fuel",
-                "Price/KM",
+                "Price/Day",
                 "Status",
               ].map((h) => (
                 <TableCell key={h} className="!text-white !font-semibold">
@@ -124,7 +147,7 @@ export default function RegisteredVehicles() {
               >
                 <TableCell className="!text-black dark:!text-white">
                   <span
-                  className="cursor-pointer underline"
+                    className="cursor-pointer underline"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleNameClick(row);
@@ -135,6 +158,9 @@ export default function RegisteredVehicles() {
                 </TableCell>
                 <TableCell className="!text-black dark:!text-white">
                   {row.email}
+                </TableCell>
+                <TableCell className="!text-black dark:!text-white">
+                  {row.registrationNum}
                 </TableCell>
                 <TableCell className="!text-black dark:!text-white">
                   {row.carName}
@@ -149,10 +175,30 @@ export default function RegisteredVehicles() {
                   {row.fuelType}
                 </TableCell>
                 <TableCell className="!text-black dark:!text-white">
-                  ₹{row.price_per_km}
+                  ₹{row.pricePerDay}
                 </TableCell>
-                <TableCell className="!text-black dark:!text-white">
-                  {row.status}
+                <TableCell>
+                  <TableCell sx={{ borderBottom: "none" }}>
+  <Button
+    variant="contained"
+    size="small"
+    onClick={() => handleToggleStatus(row)}
+    sx={{
+      backgroundColor:
+        row.status === "AVAILABLE" ? "#00e676" : "#ff1744", 
+      color: "#fff",
+      "&:hover": {
+        backgroundColor:
+          row.status === "AVAILABLE" ? "#00c853" : "#d50000",
+      },
+      minWidth: "auto",
+      padding: "4px 10px",
+      fontSize: "12px",
+    }}
+  >
+    {row.status}
+  </Button>
+</TableCell>
                 </TableCell>
               </TableRow>
             ))}
@@ -204,10 +250,10 @@ export default function RegisteredVehicles() {
         />
       </div>
       <RightDrawer
-            open={open}
-            onClose={() => setOpen(false)}
-            data={selectedRow}
-          />
+        open={open}
+        onClose={() => setOpen(false)}
+        data={selectedRow}
+      />
     </div>
   );
 }

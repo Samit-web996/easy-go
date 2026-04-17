@@ -12,6 +12,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import RightDrawer from "./RightDrawer";
 import RequestView from "./ReqView";
+import { FaEye } from "react-icons/fa";
 
 export default function BasicTable() {
   const [rows, setRows] = useState([]);
@@ -165,7 +166,7 @@ export default function BasicTable() {
                 "Brand",
                 "Seats",
                 "Fuel",
-                "Price/KM",
+                "Price/Day",
                 "Status",
                 "Veiw more",
                 "Action",
@@ -213,14 +214,14 @@ export default function BasicTable() {
                   {row.fuelType}
                 </TableCell>
                 <TableCell className="!text-black dark:!text-white">
-                  ₹{row.price_per_km}
+                  ₹{row.pricePerDay}
                 </TableCell>
                 <TableCell className="!text-black dark:!text-white">
                   {row.status}
                 </TableCell>
                 <TableCell className="cursor-pointer !text-black dark:!text-white">
                   <div>
-                    <button onClick={() => VehicleInfo(row.email)}>👁️</button>
+                    <button onClick={() => VehicleInfo(row.email)}><FaEye /></button>
                   </div>
                 </TableCell>
                 <TableCell>
