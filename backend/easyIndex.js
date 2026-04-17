@@ -4,7 +4,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 const cors = require('cors')
 app.use(cors({
-    origin : ["http://localhost:5173","http://localhost:5174"],
+    origin : ["http://localhost:5173","http://localhost:5174","http://localhost:3000"],
     credentials:true
 }))
 const signupRouter = require('./Route/Admin-Route/signupRoute/signupRoute')
@@ -34,10 +34,23 @@ const chkEmailVOwner = require('./Route/VehicleOwner_Route/myVehicleRoute/modalR
 app.use('/', chkEmailVOwner)
 const kycModal = require('./Route/VehicleOwner_Route/settingRoutes/kycRoutes')
 app.use('/' , kycModal)
-const ve_owner_info = require('./Route/Admin-Route/vehicleRoute/vehicleRoute');
-app.use('/' ,ve_owner_info)
+const ve_host_info = require('./Route/Admin-Route/vehicleRoute/vehicleRoute');
+app.use('/' ,ve_host_info)
 const viewVehicleInfo = require('./Route/Admin-Route/vehicleRoute/vehicleRoute');
 app.use('/' ,viewVehicleInfo)
+const carCategories = require('./Route/Website-Route/carCategories/carCategories');
+app.use('/' ,carCategories)
+// app.use("/uploads", express.static("uploads"));
+const updateVehicleStatus = require('./Route/Admin-Route/vehicleRoute/vehicleRoute')
+app.use('/' ,updateVehicleStatus);
+const getCarInfo = require('./Route/Website-Route/carCategories/carCategories');
+app.use('/' ,getCarInfo)
+const vehRating = require('./Route/Website-Route/carCategories/carCategories');
+app.use('/' ,vehRating)
+const updateKYC = require('./Route/Website-Route/kycRouter/kycRouter');
+app.use('/' ,updateKYC)
+const kycStatus = require('./Route/Website-Route/kycRouter/kycRouter');
+app.use('/' ,kycStatus)
 
 
 port = 3006;

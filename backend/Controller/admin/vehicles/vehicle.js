@@ -18,9 +18,9 @@ const approveVehicle = async (req, res) => {
 
   const moveDataQuery = `
         INSERT INTO registered_vehicle  
-        (registrationNum, carName, brand, model, seat, features, fuelType, price_per_km, modelYear, status, image, description, email)
+        (owner_name,registrationNum, carName, brand, model, seat, features, fuelType, price_per_km, modelYear, status, image, description, email)
         SELECT 
-        registrationNum, carName, brand, model, seat, features, fuelType, price_per_km, modelYear, 'AVAILABLE', image, description, email
+        owner_name,registrationNum, carName, brand, model, seat, features, fuelType, price_per_km, modelYear, 'AVAILABLE', image, description, email
         FROM vehicle_req
         WHERE registrationNum = ?`;
 
@@ -46,9 +46,9 @@ const approveVehicle = async (req, res) => {
   }
 };
 
-const ve_owner_info = (req, res) => {
+const ve_host_info = (req, res) => {
   const { email } = req.params;
-  const sql = "SELECT * FROM ve_owner_info WHERE email = ?";
+  const sql = "SELECT * FROM ve_host_info WHERE email = ?";
   database.query(sql, [email], (err, result) => {
     if (err) {
       return res.status(500).json({ error: "Database error" }); 
@@ -77,4 +77,20 @@ const viewVehicleInfo = (req, res) => {
 };
 
 
-module.exports = { getVehicleTable, approveVehicle, ve_owner_info,viewVehicleInfo };
+
+const updateVehicleStatus = (req, res) => {
+  const { carid, status } = req.body;
+
+  const sql = "UPDATE registered_vehicle SET status = ? WHERE carid = ?";
+
+  database.query(sql, [status, carid], (err, result) => {
+    if (err) {
+      console.error("Status update error:", err);
+      return res.status(500).json({ error: "Failed to update status" });
+    }
+
+    res.json({ message: "Status updated successfully" });
+  });
+};
+
+module.exports = { getVehicleTable, approveVehicle, ve_host_info,viewVehicleInfo,updateVehicleStatus };

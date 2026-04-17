@@ -4,22 +4,32 @@ const bcrypt = require('bcrypt')
 
 const userLogin = async (req, res) => {
     const { username, password } = req.body;
-    const sql = "SELECT username, password FROM userreg WHERE username = ?";
+    const sql = "SELECT * FROM userreg WHERE username = ?"; 
+    
     conn.query(sql, [username], async (err, result) => {
         if (err) {
-            return res.status(500).json({ error: err.message })
+            return res.status(500).json({ error: err.message });
         }
         if (result.length === 0) {
-            return res.status(404).json({ error: "User not found" })
+            return res.status(404).json({ error: "User not found" });
         }
-        const passMatch = await bcrypt.compare(password, result[0].password)
+
+        const user = result[0]; 
+        const passMatch = await bcrypt.compare(password, user.password);
+
         if (!passMatch) {
-            return res.status(401).json({ error: "Wrong password" })
+            return res.status(401).json({ error: "Wrong password" });
         }
 
-        return res.status(200).json({ message: "Login successful" })
-
-    })
-}
-
+        return res.status(200).json({ 
+            success: true,
+            message: "Login successful",
+            user: {
+                uid: user.uid,
+                name: user.username,
+                email: user.email_id  
+            }
+        });
+    });
+};
 module.exports = userLogin;

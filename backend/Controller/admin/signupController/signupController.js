@@ -2,8 +2,7 @@ const conn = require("../../../Model/dbConnect");
 const bcrypt = require("bcrypt");
 
 const signupUser = async (req, res) => {
-  const { username, password, mobile_no , email_id } = req.body;
-//   const query = "SELECT * from userreg where username = ?";
+  const { username, password, mobile_no , email_id } = req.body
   const query1 = "INSERT INTO admin_reg (username , password, mobile_no,email_id ) VALUES  (?)";
   const salt = await bcrypt.genSalt(10);
   const pass = await bcrypt.hash(password, salt);

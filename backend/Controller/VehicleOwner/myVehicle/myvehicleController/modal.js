@@ -47,7 +47,7 @@ const addVehicle = (req, res) => {
 
 const chkEmailVOwner = (req, res) => {
   const { email } = req.params;
-  const sql = "SELECT * FROM ve_owner_info WHERE email = ?";
+  const sql = "SELECT * FROM ve_host_info WHERE email = ?";
   database.query(sql, [email], (err, result) => {
     if (err) return res.status(500).json(err);
 

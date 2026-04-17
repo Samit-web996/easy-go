@@ -1,15 +1,11 @@
 /node_modules
-backend/node_modules/
 
 .env
 dist/
 build/
 
-node_modules/
 .envnode_modules/
 node_modules/
 backend/node_modules/
 frontend/easygo/node_modules/
-.env
-dist/
-build/
+uploads/
