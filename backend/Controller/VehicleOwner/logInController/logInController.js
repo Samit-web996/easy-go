@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt')
 
 const userLogin = async (req, res) => {
     const { username, password } = req.body;
-    const sql = "SELECT * FROM userreg WHERE username = ?"; 
+    const sql = "SELECT * FROM veh_host_reg WHERE username = ?"; 
     
     conn.query(sql, [username], async (err, result) => {
         if (err) {

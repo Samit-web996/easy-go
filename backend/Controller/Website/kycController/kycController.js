@@ -5,40 +5,35 @@ const database = require('../../../Model/dbConnect')
 
 const updateKYC = (req, res) => {
     const { uid } = req.params;
-    const { full_name, aadhar_no, license_no, current_address, email_id, mobile_no } = req.body; 
+    const { aadhar_no, license_no, current_address } = req.body; 
     const photoPath = req.file ? req.file.filename : null;
-1
-    if (email_id) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email_id)) {
-            return res.status(400).json({ error: "Invalid email format!" });
-        }
-    }
 
     const sql = `
-        INSERT INTO user_kyc (uid, full_name,email_id, mobile_no, aadhar_no, license_no, current_address, user_photo)
-        VALUES (?, ?, ?, ?,?, ?, ?,?)
+        INSERT INTO user_kyc (uid, aadhar_no, license_no, current_address, user_photo)
+        VALUES (?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE 
-        full_name = VALUES(full_name),
-        mobile_no = VALUES(mobile_no),
         aadhar_no = VALUES(aadhar_no),
         license_no = VALUES(license_no),
         current_address = VALUES(current_address),
-        user_photo = VALUES(user_photo),
+        user_photo = IFNULL(VALUES(user_photo), user_photo), -- Agar naya photo nahi hai toh purana rehne do
         verification_status = 'pending'
     `;
 
-    const values = [uid, full_name,email_id,mobile_no, aadhar_no, license_no, current_address, photoPath];
+    const values = [uid, aadhar_no, license_no, current_address, photoPath];
 
     database.query(sql, values, (err, result) => {
         if (err) {
-            console.error("SQL Error:", err); // Backend terminal pe check karo error
+            console.error("SQL Error:", err); 
+            
+            // Check Constraint Error (Aadhar/License format)
             if (err.code === 'ER_CHECK_CONSTRAINT_VIOLATED') {
-                return res.status(400).json({ error: "Aadhar number must be exactly 12 digits!" });
+                return res.status(400).json({ error: "Invalid Aadhar or License format!" });
             }
+            
             if (err.code === 'ER_DUP_ENTRY') {
-                return res.status(400).json({ error: "Aadhar or License already exists!" });
+                return res.status(400).json({ error: "This Aadhar or License is already registered!" });
             }
+
             return res.status(500).json({ error: "Database error during KYC" });
         }
         res.json({ success: true, message: "KYC details submitted for verification!" });

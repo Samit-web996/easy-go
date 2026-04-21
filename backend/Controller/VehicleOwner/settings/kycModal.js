@@ -3,7 +3,7 @@ const database = require('../../../Model/dbConnect')
 const kycModal = (req, res) => {
       const {ownerName,aadhar,email,address} = req.body;
       const profile_img = req.file ? req.file.filename : null;
-      const sql = "INSERT INTO ve_owner_info(ownerName,aadhar,email,address,profile_img) VALUES (?,?,?,?,?,?)";
+      const sql = "INSERT INTO ve_host_info(ownerName,aadhar,email,address,profile_img) VALUES (?,?,?,?,?)";
       const values = [ownerName,aadhar,email,address,profile_img];
 
       database.query(sql,values,(err,result) => {

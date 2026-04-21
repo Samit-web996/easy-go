@@ -38,20 +38,28 @@ const ve_host_info = require('./Route/Admin-Route/vehicleRoute/vehicleRoute');
 app.use('/' ,ve_host_info)
 const viewVehicleInfo = require('./Route/Admin-Route/vehicleRoute/vehicleRoute');
 app.use('/' ,viewVehicleInfo)
-const carCategories = require('./Route/Website-Route/carCategories/carCategories');
-app.use('/' ,carCategories)
 // app.use("/uploads", express.static("uploads"));
 const updateVehicleStatus = require('./Route/Admin-Route/vehicleRoute/vehicleRoute')
 app.use('/' ,updateVehicleStatus);
-const getCarInfo = require('./Route/Website-Route/carCategories/carCategories');
-app.use('/' ,getCarInfo)
-const vehRating = require('./Route/Website-Route/carCategories/carCategories');
-app.use('/' ,vehRating)
+
+
+const carCategories =  require('./Route/Website-Route/carCategories/carCategories')
+app.use('/', carCategories) 
+
 const updateKYC = require('./Route/Website-Route/kycRouter/kycRouter');
 app.use('/' ,updateKYC)
 const kycStatus = require('./Route/Website-Route/kycRouter/kycRouter');
 app.use('/' ,kycStatus)
+const chkUser = require('./Route/Website-Route/loginRoute/userLogin');
+app.use('/' ,chkUser);
+const userDetails = require('./Route/Website-Route/loginRoute/userLogin');
+app.use('/' , userDetails)
 
+const options = require('./Route/Website-Route/payment/paymentRoute');
+app.use('/', options)
+
+const handleRazorpayWebhook = require('./Route/Website-Route/payment/webhooks');
+app.use('/',handleRazorpayWebhook)
 
 port = 3006;
 

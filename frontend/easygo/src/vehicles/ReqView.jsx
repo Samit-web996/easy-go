@@ -27,7 +27,7 @@ export default function RequestView({ isOpen, vehicleInfo, onClose }) {
           <p><strong>Seat:</strong> {vehicleInfo.seat}</p>
           <p><strong>Features:</strong> {vehicleInfo.features}</p>
           <p><strong>FuelType:</strong> {vehicleInfo.fuelType}</p>
-          <p><strong>Price Per KM:</strong> {vehicleInfo.price_per_km}</p>
+          <p><strong>Price Per Day:</strong> {vehicleInfo.pricePerDay}</p>
           <p><strong>Model Year:</strong> {vehicleInfo.modelYear}</p>
           <p><strong>Status:</strong> {vehicleInfo.status}</p>
           <p><strong>Description:</strong> {vehicleInfo.description}</p>
