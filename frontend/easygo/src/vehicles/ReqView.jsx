@@ -1,6 +1,7 @@
 import React from 'react';
 
 export default function RequestView({ isOpen, vehicleInfo, onClose }) {
+  // console.log("Full Vehicle Data:", vehicleInfo);
   if (!isOpen || !vehicleInfo) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/40">
@@ -31,6 +32,7 @@ export default function RequestView({ isOpen, vehicleInfo, onClose }) {
           <p><strong>Model Year:</strong> {vehicleInfo.modelYear}</p>
           <p><strong>Status:</strong> {vehicleInfo.status}</p>
           <p><strong>Description:</strong> {vehicleInfo.description}</p>
+          <p><strong>Location:</strong> {vehicleInfo.city_name|| "Location not available" }</p>
         </div>
 
         <button

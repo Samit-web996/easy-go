@@ -29,7 +29,7 @@ export default function RegisteredVehicles() {
         carid: row.carid,
         status: newStatus,
       });
-      
+
       setRows((prev) =>
         prev.map((item) =>
           item.carid === row.carid ? { ...item, status: newStatus } : item,
@@ -80,7 +80,7 @@ export default function RegisteredVehicles() {
     >
       {/* Title */}
       <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
-        Vehicle Request List
+        Vehicle Registered List
       </h2>
 
       {/* Search */}
@@ -177,29 +177,29 @@ export default function RegisteredVehicles() {
                 <TableCell className="!text-black dark:!text-white">
                   ₹{row.pricePerDay}
                 </TableCell>
-                <TableCell>
+                {/* <TableCell> */}
                   <TableCell sx={{ borderBottom: "none" }}>
-  <Button
-    variant="contained"
-    size="small"
-    onClick={() => handleToggleStatus(row)}
-    sx={{
-      backgroundColor:
-        row.status === "AVAILABLE" ? "#00e676" : "#ff1744", 
-      color: "#fff",
-      "&:hover": {
-        backgroundColor:
-          row.status === "AVAILABLE" ? "#00c853" : "#d50000",
-      },
-      minWidth: "auto",
-      padding: "4px 10px",
-      fontSize: "12px",
-    }}
-  >
-    {row.status}
-  </Button>
-</TableCell>
-                </TableCell>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      onClick={() => handleToggleStatus(row)}
+                      sx={{
+                        backgroundColor:
+                          row.status === "AVAILABLE" ? "#00e676" : "#ff1744",
+                        color: "#fff",
+                        "&:hover": {
+                          backgroundColor:
+                            row.status === "AVAILABLE" ? "#00c853" : "#d50000",
+                        },
+                        minWidth: "auto",
+                        padding: "4px 10px",
+                        fontSize: "12px",
+                      }}
+                    >
+                      {row.status}
+                    </Button>
+                  </TableCell>
+                {/* </TableCell> */}
               </TableRow>
             ))}
           </TableBody>

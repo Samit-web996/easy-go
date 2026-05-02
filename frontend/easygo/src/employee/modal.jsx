@@ -15,8 +15,9 @@ const AddEmployeeModal = ({ isOpen, onClose, onSuccess }) => {
     joining_Date: "",
     salary: "",
   });
-
   const [roles, setRole] = useState([]);
+  const [dept, setDept] = useState([]);
+
   useEffect(() => {
     const fetchrole = async () => {
       try {
@@ -29,7 +30,6 @@ const AddEmployeeModal = ({ isOpen, onClose, onSuccess }) => {
     fetchrole();
   }, []);
 
-  const [dept, setDept] = useState([]);
 
   useEffect(() => {
     const fetchDept = async () => {
@@ -47,7 +47,7 @@ const AddEmployeeModal = ({ isOpen, onClose, onSuccess }) => {
 
   const handleChange = (e) => {
     setEmployee({ ...employee, [e.target.name]: e.target.value });
-    console.log(employee);
+    // console.log(employee);
   };
 
   const handleSubmit = async (e) => {
@@ -83,19 +83,6 @@ const AddEmployeeModal = ({ isOpen, onClose, onSuccess }) => {
       });
     }
   };
-
-  //  const handleRoleChange = async (eid, role) => {
-  //     try {
-  //       const res = await fetch("http://localhost:3006/update-role", {
-  //         method: "PUT",
-  //         headers: { "Content-Type": "application/json" },
-  //         body: JSON.stringify({ eid, role }),
-  //       });
-  //       if (!res.ok) throw new Error("Update failed");
-  //     } catch (err) {
-  //       console.error("Role update failed:", err.message);
-  //     }
-  //   };
 
   return (
     <div className="fixed inset-0 z-100 flex items-center justify-center p-4">

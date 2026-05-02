@@ -1,7 +1,7 @@
 const conn = require("../../../../Model/dbConnect");
 
 const getVehicleInfo = (req, res) => {
-  const sql = "SELECT * FROM registered_vehicle";
+  const sql = "SELECT v.*, c.city_name FROM registered_vehicle v JOIN city_list c ON v.loc_id = c.loc_id";
   conn.query(sql, (err, result) => {
     if (err) {
       console.error("Error fetching vehicle information:", err);
@@ -11,5 +11,7 @@ const getVehicleInfo = (req, res) => {
     else{res.json(result)}
   });
 };
+
+
 
 module.exports = getVehicleInfo;

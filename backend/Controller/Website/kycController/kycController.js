@@ -15,7 +15,7 @@ const updateKYC = (req, res) => {
         aadhar_no = VALUES(aadhar_no),
         license_no = VALUES(license_no),
         current_address = VALUES(current_address),
-        user_photo = IFNULL(VALUES(user_photo), user_photo), -- Agar naya photo nahi hai toh purana rehne do
+        user_photo = IFNULL(VALUES(user_photo), user_photo), 
         verification_status = 'pending'
     `;
 
@@ -51,6 +51,6 @@ const kycStatus = (req, res) => {
             res.json({exist: false});
         }
     })
-}
+};
 
 module.exports = {updateKYC,kycStatus};

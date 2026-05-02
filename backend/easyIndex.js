@@ -21,17 +21,17 @@ const veOwnerSignup = require('./Route/VehicleOwner_Route/signUpRoute/signUpRout
 app.use('/' ,veOwnerSignup)
 const myVehicleRouter = require("./Route/VehicleOwner_Route/myVehicleRoute/myVehicleRoute")
 app.use('/' , myVehicleRouter)
-const myVehicleModal = require('./Route/VehicleOwner_Route/myVehicleRoute/modalRoute')
-app.use('/', myVehicleModal)
+// const myVehicleModal = require('./Route/VehicleOwner_Route/myVehicleRoute/modalRoute')
+// app.use('/', myVehicleModal)
 app.use("/uploads", express.static("uploads"));
-const getFuelType = require('./Route/VehicleOwner_Route/myVehicleRoute/modalRoute')
-app.use('/' ,getFuelType)
+// const getFuelType = require('./Route/VehicleOwner_Route/myVehicleRoute/modalRoute')
+// app.use('/' ,getFuelType)
 const vehicleTable = require('./Route/Admin-Route/vehicleRoute/vehicleRoute');
 app.use('/' ,vehicleTable)
 const approveVehicle = require('./Route/Admin-Route/vehicleRoute/vehicleRoute');
 app.use('/' , approveVehicle)
-const chkEmailVOwner = require('./Route/VehicleOwner_Route/myVehicleRoute/modalRoute') ;
-app.use('/', chkEmailVOwner)
+// const chkEmailVOwner = require('./Route/VehicleOwner_Route/myVehicleRoute/modalRoute') ;
+// app.use('/', chkEmailVOwner)
 const kycModal = require('./Route/VehicleOwner_Route/settingRoutes/kycRoutes')
 app.use('/' , kycModal)
 const ve_host_info = require('./Route/Admin-Route/vehicleRoute/vehicleRoute');
@@ -60,6 +60,12 @@ app.use('/', options)
 
 const handleRazorpayWebhook = require('./Route/Website-Route/payment/webhooks');
 app.use('/',handleRazorpayWebhook)
+
+const searchCityRouter = require('./Route/Website-Route/seachCityRoute/seachCityRoute');
+app.use('/' , searchCityRouter);
+
+const newVehicle = require('./Route/VehicleOwner_Route/myVehicleRoute/modalRoute')
+app.use('/' , newVehicle)
 
 port = 3006;
 

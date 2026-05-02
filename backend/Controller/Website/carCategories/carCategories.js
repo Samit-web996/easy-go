@@ -1,7 +1,7 @@
 const database = require('../../../Model/dbConnect');
 
 const getCarCategories = (req,res) => {
-      const sql = "SELECT * FROM registered_vehicle";
+      const sql = `SELECT v.* , l.city_name FROM registered_vehicle v JOIN city_list l ON v.loc_id = l.loc_id`;
       database.query(sql , (err,result) => {
             if (err) {
                   console.error("Error fetching CarCategories information:", err)

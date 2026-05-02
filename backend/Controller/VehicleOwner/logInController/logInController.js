@@ -3,10 +3,10 @@ const bcrypt = require('bcrypt')
 // const jwt = require('jsonwebtoken')
 
 const userLogin = async (req, res) => {
-    const { username, password } = req.body;
-    const sql = "SELECT * FROM veh_host_reg WHERE username = ?"; 
+    const { email_id, password } = req.body;
+    const sql = "SELECT * FROM veh_host_reg WHERE email_id = ?"; 
     
-    conn.query(sql, [username], async (err, result) => {
+    conn.query(sql, [email_id], async (err, result) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
@@ -26,7 +26,7 @@ const userLogin = async (req, res) => {
             message: "Login successful",
             user: {
                 uid: user.uid,
-                name: user.username,
+                name: user.name,
                 email: user.email_id  
             }
         });

@@ -18,9 +18,9 @@ const approveVehicle = async (req, res) => {
 
   const moveDataQuery = `
         INSERT INTO registered_vehicle  
-        (owner_name,registrationNum, carName, brand, model, seat, features, fuelType, price_per_km, modelYear, status, image, description, email)
+        (owner_name,registrationNum,loc_id, carName, brand, model, seat, features, fuelType, pricePerDay, modelYear, status, image, description, email)
         SELECT 
-        owner_name,registrationNum, carName, brand, model, seat, features, fuelType, price_per_km, modelYear, 'AVAILABLE', image, description, email
+        owner_name,registrationNum,loc_id, carName, brand, model, seat, features, fuelType, pricePerDay, modelYear, 'AVAILABLE', image, description, email
         FROM vehicle_req
         WHERE registrationNum = ?`;
 
@@ -63,7 +63,7 @@ const ve_host_info = (req, res) => {
 };
 
 const viewVehicleInfo = (req, res) => {
-  const sql = "SELECT * FROM  vehicle_req WHERE email = ?";
+  const sql = "SELECT vr.*, cl.city_name FROM vehicle_req vr JOIN city_list cl ON vr.loc_id = cl.loc_id WHERE vr.email = ?";
   const email = req.params.email
   database.query(sql, [email],(err, result) => {
     if (err) {
