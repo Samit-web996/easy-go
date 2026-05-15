@@ -43,14 +43,18 @@ const updateKYC = (req, res) => {
 const kycStatus = (req, res) => {
     const {uid} = req.params;
     const sql = "SELECT verification_status FROM user_kyc WHERE uid = ?";
-    database.query(sql,[uid], (err,result) => {
-        if (err) return res.status(500).json({ error: "Database error"});
+    
+    database.query(sql, [uid], (err, result) => {
+        if (err) return res.status(500).json({ error: "Database error" });
+
         if (result.length > 0) {
-            res.json({exist: true, status: result[0].verification_status.trim() });
-        }else {
-            res.json({exist: false});
+            // Optional chaining (?.) null check karta hai trim chalane se pehle
+            const status = result[0].verification_status?.trim() || "pending";
+            res.json({ exist: true, status: status });
+        } else {
+            res.json({ exist: false });
         }
-    })
+    });
 };
 
 module.exports = {updateKYC,kycStatus};

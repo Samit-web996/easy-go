@@ -1,66 +1,67 @@
 const crypto = require("crypto");
 const database = require("../../../Model/dbConnect");
-const sendEmail = require("../../nodemailer"); 
+const sendEmail = require("../../nodemailer");
 
 const handleRazorpayWebhook = async (req, res) => {
   const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
   const signature = req.headers["x-razorpay-signature"];
 
-  // Verify Signature
+  // 1. Signature Verification
   const shasum = crypto.createHmac("sha256", secret);
   shasum.update(JSON.stringify(req.body));
   const digest = shasum.digest("hex");
 
-  if (digest === signature) {
-    console.log("--- Webhook Verified! ✅ ---");
+  if (digest !== signature) {
+    console.log("Invalid Signature! ❌");
+    return res.status(400).send("Invalid signature");
+  }
 
-    const event = req.body.event;
-    const payment = req.body.payload.payment.entity;
+  console.log("--- Webhook Verified! ✅ ---");
+  const { event, payload } = req.body;
+  const payment = payload.payment.entity;
 
-    // Extract Details
-    const orderId =
-      payment.order_id ||
-      (req.body.payload.order ? req.body.payload.order.entity.id : null);
-    const paymentId = payment.id;
-    const email = payment.email; 
-    const contact = payment.contact;
-    const amount = payment.amount / 100;
-    const failureReason = payment.error_description || null;
+  const orderId =
+    payment.order_id || (payload.order ? payload.order.entity.id : null);
+  const paymentId = payment.id;
+  const email = payment.email;
+  const contact = payment.contact;
+  const amount = payment.amount / 100;
+  const failureReason = payment.error_description || null;
 
-    let status = null;
+  let status = null;
+  if (event === "payment.captured") status = "PAID";
+  else if (event === "payment.failed") status = "FAILED";
 
-    // Step 1: Status Handling & Email Trigger
-    if (event === "payment.captured") {
-      status = "PAID";
-      console.log("Sending mail to:", email);
-      
-      const dynamicCarQuery = `
-        SELECT rv.carName, rv.brand, b.user_id 
+  if (!status) {
+    return res.status(200).json({ status: "ignored" });
+  }
+
+  const dynamicCarQuery = `
+        SELECT rv.carid, rv.carName, rv.brand, b.user_id 
         FROM registered_vehicle rv 
         JOIN bookings b ON b.car_id = rv.carid 
         WHERE b.order_id = ?`;
 
-    database.query(dynamicCarQuery, [orderId], async (err, results) => {
-        if (err) {
-            console.error("DB Query Error:", err.message);
-            return;
-        }
-        let carName = "Your Rental Car"; 
-        let uid = null;
+  database.query(dynamicCarQuery, [orderId], async (err, results) => {
+    if (err) {
+      console.error("DB Query Error:", err.message);
+      return res.status(500).send("Internal Error");
+    }
 
-        if (results.length > 0) {
-            carName = `${results[0].brand} ${results[0].carName}`;
-            uid = results[0].user_id;
-        }
+    const carData = results[0] || {};
+    const carName = carData.carName
+      ? `${carData.brand} ${carData.carName}`
+      : "Your Rental Car";
+    const carId = carData.carid;
+    const uid = carData.user_id;
+
+    if (status === "PAID" && email) {
       try {
-        if (email) {
-          // const carName = "Nexon EV"; // Bhai, ise dynamic banana agar possible ho (DB query se)
-          const bookingDate = new Date().toLocaleDateString();
-
-          await sendEmail({
-            email: email,
-            subject: `Booking Confirmed: Your trip with ${carName} is ready! 🚗`,
-            html: `
+        const bookingDate = new Date().toLocaleDateString();
+        await sendEmail({
+          email: email,
+          subject: `Booking Confirmed: Your trip with ${carName} is ready! 🚗`,
+          html: `
     <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden;">
         <div style="background-color: #f97316; color: white; padding: 20px; text-align: center;">
             <h1 style="margin: 0;">Congratulations! 🎉</h1>
@@ -110,75 +111,42 @@ const handleRazorpayWebhook = async (req, res) => {
             Bhopal, Madhya Pradesh, India.
         </div>
     </div>
-    `,
-          });
-          console.log("✅ Confirmation Email Sent to:", email);
-        } else {
-          console.log("⚠️ Email not found in payload, skipping email trigger.");
-        }
-      } catch (err) {
-        console.error("Nodemailer Error:", err.message);
+    `, // Add your full HTML here
+        });
+        console.log("✅ Confirmation Email Sent.");
+      } catch (mailErr) {
+        console.error("Nodemailer Error:", mailErr.message);
       }
-      });
-    } else if (event === "payment.failed") {
-      status = "FAILED";
     }
 
-    // Ignore other events (like authorized)
-    if (!status) {
-      console.log(`ℹ️ Ignoring extra event: ${event}`);
-      return res.status(200).json({ status: "ignored" });
-    }
+    const logQuery = `INSERT INTO payment_logs (order_id, uid, payment_id, user_email, user_contact, amount, status, failure_reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+    const updateBookingQuery =
+      "UPDATE bookings SET payment_status = ? WHERE order_id = ?";
+    const updateVehicleQuery =
+      "UPDATE registered_vehicle SET status = 'UNAVAILABLE' WHERE carid = ?";
 
-    // Step 2: DB Operations (Fetch User ID first)
-    const findUserQuery = "SELECT user_id FROM bookings WHERE order_id = ?";
+    database.query(
+      logQuery,
+      [orderId, uid, paymentId, email, contact, amount, status, failureReason],
+      (err) => {
+        if (err) console.error("Log Error:", err.message);
 
-    database.query(findUserQuery, [orderId], (err, results) => {
-      if (err) {
-        console.error("DB Search Error:", err.message);
-        return res.status(500).send("Internal Server Error");
-      }
+        database.query(updateBookingQuery, [status, orderId], (err) => {
+          if (err) console.error("Booking Update Error:", err.message);
 
-      const uid = results.length > 0 ? results[0].user_id : null;
-
-      // Step 3: Insert into Payment Logs
-      const logQuery = `INSERT INTO payment_logs 
-                (order_id, uid, payment_id, user_email, user_contact, amount, status, failure_reason) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-
-      database.query(
-        logQuery,
-        [
-          orderId,
-          uid,
-          paymentId,
-          email,
-          contact,
-          amount,
-          status,
-          failureReason,
-        ],
-        (err) => {
-          if (err) console.error("❌ Log insertion error:", err.message);
-          else console.log(`📝 Log saved as ${status} with UID:`, uid);
-        },
-      );
-
-      // Step 4: Update Booking Status
-      const updateBookingQuery =
-        "UPDATE bookings SET payment_status = ? WHERE order_id = ?";
-      database.query(updateBookingQuery, [status, orderId], (err) => {
-        if (err) console.error("Booking update error:", err.message);
-        else console.log(`🚗 Booking status updated to ${status} in DB.`);
-      });
-    });
-
-    // Success response to Razorpay
-    res.status(200).json({ status: "ok" });
-  } else {
-    console.log("Invalid Signature!");
-    res.status(400).send("Invalid signature");
-  }
+          if (status === "PAID" && carId) {
+            database.query(updateVehicleQuery, [carId], (err) => {
+              if (err) console.error("Vehicle Status Error:", err.message);
+              else console.log("🚗 Vehicle marked UNAVAILABLE.");
+              return res.status(200).json({ status: "ok" });
+            });
+          } else {
+            return res.status(200).json({ status: "ok" });
+          }
+        });
+      },
+    );
+  });
 };
 
 module.exports = handleRazorpayWebhook;

@@ -9,7 +9,7 @@ const razorpay = new Razorpay({
 });
 
 const options = async (req,res) => {
-      const { amount, uid, car_id } = req.body;
+      const { amount, uid, car_id,start_date, end_date } = req.body;
 
   const options = {
     amount: amount * 100,
@@ -22,10 +22,10 @@ const options = async (req,res) => {
     console.log(order, "userdata");
 
     const bookingQuery = `INSERT INTO bookings 
-        (user_id, car_id, order_id, total_amount, payment_status) 
-        VALUES (?, ?, ?, ?, 'PENDING')`;
+        (user_id, car_id, order_id, total_amount,start_date, end_date, payment_status) 
+        VALUES (?, ?, ?, ?,?,?, 'PENDING')`;
 
-    database.query(bookingQuery, [uid, car_id, order.id, amount], (err) => {
+    database.query(bookingQuery, [uid, car_id, order.id, amount,start_date, end_date], (err) => {
       if (err) {
         console.error("Database Booking Error:", err.message);
         return res.status(500).json({ success: false, message: "DB mein booking save nahi hui" });
@@ -40,8 +40,9 @@ const options = async (req,res) => {
     })
     });
   } catch (error) {
+  
     console.error("Razorpay Error:", error);
-    res.status(500).json({ success: false, message: "Order nahi ban paya" });
+    res.status(500).json({ success: false, message: "Order not completed for server" });
   }
 };
 

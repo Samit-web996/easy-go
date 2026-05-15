@@ -19,7 +19,7 @@ export default function RequestView({ isOpen, vehicleInfo, onClose }) {
         )}
 
         <div className="space-y-2 text-sm">
-          <p><strong>Name:</strong> {vehicleInfo.owner_name}</p>
+          <p><strong>Name As per RC:</strong> {vehicleInfo.owner_name}</p>
           <p><strong>Email:</strong> {vehicleInfo.email}</p>
           <p><strong>Registration Number:</strong> {vehicleInfo.registrationNum}</p>
           <p><strong>Car Name:</strong> {vehicleInfo.carName}</p>

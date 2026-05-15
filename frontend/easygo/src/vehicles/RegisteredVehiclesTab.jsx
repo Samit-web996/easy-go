@@ -48,7 +48,7 @@ export default function RegisteredVehicles() {
   useEffect(() => {
     const getVehicleTable = async () => {
       try {
-        const result = await axios.get("http://localhost:3006/my-vehicles");
+        const result = await axios.get("http://localhost:3006/view-cars");
         setRows(result.data);
       } catch (err) {
         console.error(err);
@@ -120,7 +120,7 @@ export default function RegisteredVehicles() {
           <TableHead>
             <TableRow className="bg-blue-600">
               {[
-                "Name",
+                "Name As per RC",
                 "Email",
                 "Registeration Number",
                 "Car Name",

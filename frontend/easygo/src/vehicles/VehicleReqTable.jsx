@@ -44,54 +44,51 @@ export default function BasicTable() {
     getVehicleTable();
   }, []);
 
-  const handleApprove = (regNum) => {
-    const swalWithBootstrapButtons = Swal.mixin({
-      customClass: {
-        confirmButton: "bg-green-500 text-white px-3 py-1 x.5 rounded-md",
-        cancelButton: "bg-red-500 text-white px-3 py-1.5 rounded-md ml-2",
-      },
-      buttonsStyling: false,
-    });
+  // Function ko update karo
+const handleAction = (regNum, actionType) => {
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: "bg-green-500 text-white px-3 py-1.5 rounded-md",
+      cancelButton: "bg-red-500 text-white px-3 py-1.5 rounded-md ml-2",
+    },
+    buttonsStyling: false,
+  });
 
-    swalWithBootstrapButtons
-      .fire({
-        title: "Are you sure?",
-        text: "You want to approve this vehicle?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, approve it!",
-        cancelButtonText: "No, cancel!",
-        reverseButtons: true,
-      })
-      .then(async (result) => {
-        if (result.isConfirmed) {
-          try {
-            await axios.post("http://localhost:3006/vehicle-approve", {
-              registrationNum: regNum,
-            });
-
-            swalWithBootstrapButtons.fire({
-              title: "Approved!",
-              text: "Vehicle approved successfully.",
-              icon: "success",
-            });
-
-            setRows((prev) =>
-              prev.filter((car) => car.registrationNum !== regNum),
-            );
-          } catch (err) {
-            console.log(err);
-            Swal.fire("Error", "Something went wrong", "error");
-          }
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-          swalWithBootstrapButtons.fire({
-            title: "Cancelled",
-            text: "Approval cancelled !!!",
-            icon: "error",
+  swalWithBootstrapButtons
+    .fire({
+      title: "Are you sure?",
+      text: `You want to ${actionType} this vehicle?`, 
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: `Yes, ${actionType} it!`,
+      cancelButtonText: "No, cancel!",
+      reverseButtons: true,
+    })
+    .then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          // IMPORTANT: Status 'approve' ya 'reject' hi bhej rahe hain backend logic ke liye
+          await axios.post(`http://localhost:3006/vehicle-approve`, {
+            registrationNum: regNum,
+            status: actionType // 'approve' ya 'reject'
           });
+
+          swalWithBootstrapButtons.fire({
+            title: actionType === 'approve' ? "Approved!" : "Rejected!",
+            text: `Vehicle ${actionType}d successfully.`,
+            icon: "success",
+          });
+
+          // Table se row remove karna
+          setRows((prev) => prev.filter((car) => car.registrationNum !== regNum));
+
+        } catch (err) {
+          console.error(err);
+          Swal.fire("Error", "Something went wrong", "error");
         }
-      });
-  };
+      }
+    });
+};
 
   const filteredRows = rows.filter(
     (row) =>
@@ -160,7 +157,7 @@ export default function BasicTable() {
           <TableHead>
             <TableRow className="bg-blue-600">
               {[
-                "Name",
+                "Name As per RC",
                 "Email",
                 "Car Name",
                 "Brand",
@@ -227,13 +224,15 @@ export default function BasicTable() {
                 <TableCell>
                   <div className="flex gap-3">
                     <button
-                      onClick={() => handleApprove(row.registrationNum)}
+                      onClick={() => handleAction(row.registrationNum,'approve')}
                       className="cursor-pointer min-w-[60px] px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 bg-green-500 text-white hover:bg-green-600"
                     >
                       Approve
                     </button>
 
-                    <button className="cursor-pointer min-w-[60px] px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 bg-red-500 text-white hover:bg-red-600">
+                    <button 
+                    onClick={() => handleAction(row.registrationNum, 'reject')}
+                    className="cursor-pointer min-w-[60px] px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 bg-red-500 text-white hover:bg-red-600">
                       Reject
                     </button>
                   </div>
