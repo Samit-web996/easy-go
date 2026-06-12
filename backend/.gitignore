@@ -1,11 +1,33 @@
-/node_modules
+# /node_modules
 
+# .env
+# dist/
+# build/
+
+# node_modules/
+# backend/node_modules/
+# frontend/easygo/node_modules/
+# uploads/
+
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment Variables (Bohot zaroori!)
 .env
+backend/.env
+frontend/easygo/.env
+
+# Production Builds
 dist/
 build/
+frontend/easygo/build/
 
-.envnode_modules/
-node_modules/
-backend/node_modules/
-frontend/easygo/node_modules/
+# Local Uploads (Taaki car images git par na jayein)
 uploads/
+backend/uploads/
+
+# OS related files
+.DS_Store
+Thumbs.db

@@ -3,6 +3,6 @@ const router = express.Router();
 const handleRazorpayWebhook  = require('../../../Controller/Website/payment/webhooks');
 
 // Ye route Razorpay ke liye hai
-router.post('/api/webhook', handleRazorpayWebhook);
+router.post('/api/webhook/razorpay', handleRazorpayWebhook);
 
 module.exports = router;

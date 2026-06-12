@@ -1,6 +1,38 @@
+import { useState } from "react";
 import { CarUsageChart, RevenueProfitChart } from "./Analysis";
+import axios from "axios"; 
+import { useEffect } from "react";
 
 export default function AdminDashboard() {
+
+  const [stats, setStats] = useState({
+  totalCars: 0,
+  totalRevenue: 0,
+  activeCars: 0
+})
+const [loading , setloading] = useState(true);
+
+useEffect(() => {
+  axios.get("http://localhost:3006/dashboard-data")
+  .then((res) => {
+    if (res.data.success) {
+      setStats(res.data.data);
+    }
+    setloading(false);
+  })
+  .catch((err) => {
+    console.error("Dashboard data fetch karne mein error:", err);
+    setloading(false);
+  })
+}, []);
+const formatToIndianCurrency = (num) => {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0, // Paise (.00) nahi dikhane ke liye
+  }).format(num);
+};
+
   return (
     // 'bg-gray-50' add kiya hai taaki light mode mein background clean dikhe
     <div className="flex-1 min-h-screen p-4 bg-gray-50 dark:bg-black transition-colors duration-300">
@@ -19,7 +51,7 @@ export default function AdminDashboard() {
         <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
           <h3 className="text-gray-500 dark:text-gray-400 font-medium">Total Rental Car</h3>
           <p className="text-2xl font-bold mt-2 text-gray-900 dark:text-white">
-            1,200
+            {loading ? "..." : stats.totalCars.toLocaleString("en-IN")}
           </p>
         </div>
 
@@ -27,7 +59,7 @@ export default function AdminDashboard() {
         <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
           <h3 className="text-gray-500 dark:text-gray-400 font-medium">Revenue</h3>
           <p className="text-2xl font-bold mt-2 text-emerald-600 dark:text-emerald-400">
-            ₹ 4,25,000
+            {loading ? "..." : formatToIndianCurrency(stats.totalRevenue)}
           </p>
         </div>
 
@@ -35,7 +67,7 @@ export default function AdminDashboard() {
         <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
           <h3 className="text-gray-500 dark:text-gray-400 font-medium">Active Cars</h3>
           <p className="text-2xl font-bold mt-2 text-blue-600 dark:text-blue-400">
-            320
+            {loading ? "..." : stats.activeCars.toLocaleString("en-IN")}
           </p>
         </div>
       </div>

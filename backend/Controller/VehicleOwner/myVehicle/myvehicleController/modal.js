@@ -1,7 +1,7 @@
 const { exist } = require("joi");
 const database = require("../../../../Model/dbConnect");
 
-const addVehicle = (req, res) => {
+const addVehicle = async (req, res) => {
   const {
     owner_name,
     email,
@@ -21,14 +21,11 @@ const addVehicle = (req, res) => {
   const image = req.file ? req.file.filename : null;
 
   const chkRegExist = "SELECT * FROM registered_vehicle WHERE registrationNum = ?";
-
-  // 1. Pehle Duplicate Check karo
-  database.query(chkRegExist, [registrationNum], (err, result) => {
+  database.query(chkRegExist, [registrationNum], async (err, result) => {
     if (err) {
       return res.status(500).json({ success: false, message: "Database error during check" });
     }
 
-    // 2. Agar duplicate mil gaya toh yahi se response bhej kar ruk jao
     if (result.length > 0) {
       return res.status(400).json({
         success: false,
@@ -36,7 +33,29 @@ const addVehicle = (req, res) => {
       });
     }
 
-    // 3. Agar duplicate nahi hai, tabhi INSERT query chalao (Iske andar)
+        let finalImageName = null;
+
+    if (req.file) {
+      try {
+        const inputPath = req.file.path;
+        finalImageName = `optimized-${Date.now()}.webp`; 
+        
+        const outputPath = path.join(req.file.destination, finalImageName); 
+
+        await sharp(inputPath)
+          .webp({ quality: 80 }) 
+          .resize(1200, 800, { fit: 'inside', withoutEnlargement: true }) // Responsive sizing
+          .toFile(outputPath);
+
+        if (fs.existsSync(inputPath)) {
+          fs.unlinkSync(inputPath);
+        }
+      } catch (imageErr) {
+        console.error("Image optimization failed:", imageErr);
+        return res.status(500).json({ success: false, message: "Failed to process vehicle image" });
+      }
+    }
+
     const sql =
       "INSERT INTO vehicle_req(owner_name,email,registrationNum,loc_id , carName , brand , model , seat , features , fuelType ,pricePerDay , modelYear ,image , description) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     
@@ -62,70 +81,11 @@ const addVehicle = (req, res) => {
         console.log(err);
         return res.status(500).json({ success: false, message: "Database Error during insertion" });
       } else {
-        // 4. Final Success Response
         return res.status(200).json({ success: true, message: "Vehicle added successfully" });
       }
     });
   });
 };
-
-// const addVehicle = (req, res) => {
-//   const {
-//     owner_name,
-//     email,
-//     registrationNum,
-//     carName,
-//     brand,
-//     model,
-//     seat,
-//     features,
-//     fuelType,
-//     price_per_km,
-//     modelYear,
-//     description,
-//   } = req.body;
-//   const image = req.file ? req.file.filename : null;
-
-//   const  chkRegExist = "SELECT * FROM registered_vehicle WHERE registrationNum = ?";
-
-//   database.query(chkRegExist, [registrationNum] , (err,result) => {
-//     if (err) return res.status(500).json({ success: false , message: "database err"});
-
-//     if(result.length > 0) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "This vehicle is already registered"
-//       });
-//     }
-//   })
-
-//   const sql =
-//     "INSERT INTO vehicle_req(owner_name,email,registrationNum , carName , brand , model , seat , features , fuelType ,price_per_km , modelYear ,image , description) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
-//   const values = [
-//     owner_name,
-//     email,
-//     registrationNum,
-//     carName,
-//     brand,
-//     model,
-//     seat,
-//     features,
-//     fuelType,
-//     price_per_km,
-//     modelYear,
-//     image,
-//     description,
-//   ];
-
-//   database.query(sql, values, (err, result) => {
-//     if (err) {
-//       console.log(err);
-//       return res.status(500).json({ message: "Database Error" });
-//     } else {
-//       res.status(200).json({ message: "Vehicle added successfully" });
-//     }
-//   });
-// };
 
 const chkEmailVOwner = (req, res) => {
   const { email } = req.params;

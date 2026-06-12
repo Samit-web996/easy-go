@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { LineChart } from "@mui/x-charts/LineChart";
+import axios from "axios";
 
+// 1. Ek hi baar chartSx globally upar declare rahega
 const chartSx = {
   color: "currentColor",
   "& text, & span, & label": {
@@ -27,38 +29,103 @@ const chartSx = {
 };
 
 export function CarUsageChart() {
-  const data = [
-    { id: 0, value: 35, label: "SUV" },
-    { id: 1, value: 25, label: "Sedan" },
-    { id: 2, value: 20, label: "Hatchback" },
-    { id: 3, value: 10, label: "Luxury" },
-    { id: 4, value: 10, label: "Electric" },
-  ];
+  const [chartData, setChartData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3006/car-category-graph")
+      .then((res) => {
+        if (res.data.success) {
+          const formattedData = res.data.data.map((item, index) => ({
+            id: index,
+            value: item.count, // Make sure backend returns 'count' properly
+            label: item.category,
+          }));
+          setChartData(formattedData);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("❌ Error fetching graph data:", err);
+        setLoading(false);
+      });
+  }, []);
+
+  // ⚠️ REMOVED: Andar jo const chartSx = {} khali object tha, use hata diya hai!
 
   return (
-    <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 dark:text-white p-6 rounded-xl shadow-sm transition-colors">
+    <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 dark:text-white p-6 rounded-xl shadow-sm transition-colors w-full">
       <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
         Car Usage Distribution
       </h2>
 
-      <div className="text-gray-900 dark:text-white">
-        <PieChart
-          sx={chartSx}
-          series={[
-            {
-              data: data,
-              innerRadius: 50,
-              outerRadius: 110,
-              paddingAngle: 3,
-              cornerRadius: 5,
-            },
-          ]}
-          height={300}
-        />
+      {/* ⚠️ Added w-full to make sure container expands */}
+      <div className="text-gray-900 dark:text-white flex justify-center items-center h-[300px] w-full">
+        {loading ? (
+          <div className="text-gray-500 dark:text-gray-400 animate-pulse font-medium">
+            Loading Chart Analytics...
+          </div>
+        ) : chartData.length === 0 ? (
+          <div className="text-gray-500 dark:text-gray-400 font-medium">
+            No Data Available
+          </div>
+        ) : (
+          // ✅ Added dynamic width property so layout renders properly
+          <PieChart
+            sx={chartSx}
+            series={[
+              {
+                data: chartData,
+                innerRadius: 50,
+                outerRadius: 110,
+                paddingAngle: 3,
+                cornerRadius: 5,
+              },
+            ]}
+            height={300}
+            width={450} 
+          />
+        )}
       </div>
     </div>
   );
 }
+
+// export function CarUsageChart() {
+//   const data = [
+//     { id: 0, value: 35, label: "SUV" },
+//     { id: 1, value: 25, label: "Sedan" },
+//     { id: 2, value: 20, label: "Hatchback" },
+//     { id: 3, value: 10, label: "Luxury" },
+//     { id: 4, value: 10, label: "Electric" },
+//   ];
+  
+
+//   return (
+//     <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 dark:text-white p-6 rounded-xl shadow-sm transition-colors">
+//       <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+//         Car Usage Distribution
+//       </h2>
+
+//       <div className="text-gray-900 dark:text-white">
+//         <PieChart
+//           sx={chartSx}
+//           series={[
+//             {
+//               data: data,
+//               innerRadius: 50,
+//               outerRadius: 110,
+//               paddingAngle: 3,
+//               cornerRadius: 5,
+//             },
+//           ]}
+//           height={300}
+//         />
+//       </div>
+//     </div>
+//   );
+// }
 
 export function RevenueProfitChart() {
   const months = [

@@ -56,10 +56,13 @@ app.use('/', carCategories)
 
 const updateKYC = require('./Route/Website-Route/kycRouter/kycRouter');
 app.use('/' ,updateKYC)
+
 const kycStatus = require('./Route/Website-Route/kycRouter/kycRouter');
 app.use('/' ,kycStatus)
+
 const chkUser = require('./Route/Website-Route/loginRoute/userLogin');
 app.use('/' ,chkUser);
+
 const userDetails = require('./Route/Website-Route/loginRoute/userLogin');
 app.use('/' , userDetails)
 
@@ -73,10 +76,16 @@ const searchCityRouter = require('./Route/Website-Route/seachCityRoute/seachCity
 app.use('/' , searchCityRouter);
 
 const newVehicle = require('./Route/VehicleOwner_Route/myVehicleRoute/modalRoute')
-app.use('/' , newVehicle)
+app.use('/' , newVehicle);
 
 const clientRouter = require('./Route/Admin-Route/clientRouter/clientRouter');
-app.use('/', clientRouter)
+app.use('/', clientRouter);
+
+const dashboardRouter = require('./Route/Admin-Route/dashboardRoute/dashboard');
+app.use('/' , dashboardRouter);
+
+const graphRouter = require('./Route/Admin-Route/dashboardRoute/graphAnalysis');
+app.use('/' ,graphRouter);
 
 cron.schedule('0 * * * *', () => {
     console.log("Checking for ride completions...");
