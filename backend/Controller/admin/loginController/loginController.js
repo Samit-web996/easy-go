@@ -18,7 +18,6 @@ const userLogin = async (req, res) => {
     }
     
     const user = result[0];
-    console.log("tooken");
     const token = jwt.sign(
       {
         username: user.username,

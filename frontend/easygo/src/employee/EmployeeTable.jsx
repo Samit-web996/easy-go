@@ -1,7 +1,8 @@
 import axios from "axios";
 import { useState, useMemo, useEffect } from "react";
-import ViewEmployeeModal from "./View"; 
+import ViewEmployeeModal from "./View";
 import EditEmployeeModal from "./Edit";
+import { Eye, Pencil } from "lucide-react";
 
 const PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
 
@@ -41,45 +42,43 @@ export default function EmployeeTable() {
   }, []);
 
   const fetchRoles = async () => {
-  try {
-    setLoading(true);
-    setError(null);
+    try {
+      setLoading(true);
+      setError(null);
 
-    const res = await axios.get("http://localhost:3006/get-role");
-    setRole(res.data);
+      const res = await axios.get("http://localhost:3006/get-role");
+      setRole(res.data);
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Failed to fetch roles");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  } catch (err) {
-    console.error(err);
-    setError(err.message || "Failed to fetch roles");
-  } finally {
-    setLoading(false);
-  }
-};
+  useEffect(() => {
+    fetchRoles();
+  }, []);
 
-useEffect(() => {
-  fetchRoles();
-}, []);
+  const fetchDept = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
- const fetchDept = async () => {
-  try {
-    setLoading(true);
-    setError(null);
+      const res = await axios.get("http://localhost:3006/get-dept");
+      setDept(res.data);
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Failed to fetch departments");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const res = await axios.get("http://localhost:3006/get-dept");
-    setDept(res.data);
-
-  } catch (err) {
-    console.error(err);
-    setError(err.message || "Failed to fetch departments");
-  } finally {
-    setLoading(false);
-  }
-};
-
-// 🔹 useEffect only calls function
-useEffect(() => {
-  fetchDept();
-}, []);
+  // 🔹 useEffect only calls function
+  useEffect(() => {
+    fetchDept();
+  }, []);
 
   // ─── Filter ──────────────────────────────────────────────────────────────────
   const filtered = useMemo(() => {
@@ -135,8 +134,8 @@ useEffect(() => {
     }
   }
   const handleEditClick = (emp) => {
-    setEditEmp(emp); 
-    setIsEditModalOpen(true); 
+    setEditEmp(emp);
+    setIsEditModalOpen(true);
   };
 
   function SortIcon({ col }) {
@@ -254,7 +253,6 @@ useEffect(() => {
                           fill="none"
                           viewBox="0 0 24 24"
                         >
-                         
                           <path
                             className="opacity-75"
                             fill="currentColor"
@@ -303,19 +301,33 @@ useEffect(() => {
                         {emp.mobile}
                       </td>
                       <td className="px-4 py-3 flex gap-3">
-                        <button
-                          onClick={() => viewEmployee(emp.eid)}
-                          className="min-w-[60px] px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 bg-blue-500 text-white hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700"
-                        >
-                          View
-                        </button>
-                        <button
-                          onClick={() => handleEditClick(emp)}
-                          className="min-w-[60px] px-3 py-1.5 rounded bg-yellow-500 hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700 text-white"
-                        >
-                          Edit
-                        </button>
-            
+                        <div className="flex items-center gap-3">
+                          {" "}
+                          {/* Wrapper for centering and spacing */}
+                          {/* View Button */}
+                          <button
+                            onClick={() => viewEmployee(emp.eid)}
+                            className="inline-flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-300 
+               bg-blue-50 hover:bg-blue-100 text-blue-600 
+               dark:bg-blue-900/20 dark:hover:bg-blue-900/40 dark:text-blue-400
+               border border-blue-200 dark:border-blue-800 shadow-sm hover:scale-105 active:scale-95"
+                            title="View Details"
+                          >
+                            <Eye size={18} />
+                          </button>
+                          {/* Edit Button */}
+                          <button
+                            onClick={() => handleEditClick(emp)}
+                            className="inline-flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-300 
+               bg-amber-50 hover:bg-amber-100 text-amber-600 
+               dark:bg-amber-900/20 dark:hover:bg-amber-900/40 dark:text-amber-400
+               border border-amber-200 dark:border-amber-800 shadow-sm hover:scale-105 active:scale-95"
+                            title="Edit Employee"
+                          >
+                            <Pencil size={18} />
+                          </button>
+                        </div>
+
                         <EditEmployeeModal
                           isOpen={isEditModalOpen}
                           editEmp={editEmp}

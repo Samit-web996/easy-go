@@ -5,25 +5,28 @@ import { useEffect, useState } from "react";
 export default function RightDrawer({ open, onClose, data }) {
   const [info, setInfo] = useState(null);
 
-  useEffect(() => {
-    const getOwnerInfo = async () => {
-      if (!data) return;
+useEffect(() => {
+  const getOwnerInfo = async () => {
+    if (!data) return;
 
-      try {
-        const res = await axios.get(
-          `http://localhost:3006/view-vehicle-information/${data.email}`,
-        );
+    try {
+      const res = await axios.get(
+        `http://localhost:3006/vehicle-owner-information/${data.email}`
+      );
 
-        setInfo(res.data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
+      const result = Array.isArray(res.data) ? res.data[0] : res.data; 
 
-    if (open) {
-      getOwnerInfo();
+      setInfo(result);
+
+    } catch (err) {
+      console.log(err);
     }
-  }, [open, data]);
+  };
+
+  if (open) {
+    getOwnerInfo();
+  }
+}, [open, data]);
 
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>
@@ -32,7 +35,6 @@ export default function RightDrawer({ open, onClose, data }) {
     {info ? (
       <>
       <div>
-        {/* Header */}
         <div className="flex flex-col items-center mb-6">
           {info.profile_img ? (
             <img

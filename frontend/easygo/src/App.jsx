@@ -9,6 +9,7 @@ import Financial from "./Financial";
 import { ToastContainer } from "react-toastify";
 import ProtectedRoute from "./ProtectedRoute";
 import { StyledEngineProvider } from "@mui/material";
+import Client from "./client/CLient";
 // import "./App.css";
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
             <Route path="vehicles" element={<Vehicles />} />
             {/* <Route path=""/> */}
             <Route path="financial" element={<Financial />} />
+            <Route path = 'client' element = {<Client/>}/>
           </Route>
         </Route>
       </Routes>

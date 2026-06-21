@@ -25,9 +25,7 @@ export default function EditEmployeeModal({
   const handleUpdate = async () => {
     try {
       const res = await axios.patch(
-        `http://localhost:3006/update-emp/${editEmp.eid}`,
-        editEmp,
-      );
+        `http://localhost:3006/update-emp/${editEmp.eid}`, editEmp);
       toast.success("Employee profile updation successfully!", {
         position: "top-right",
         autoClose: 2000,

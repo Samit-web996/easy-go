@@ -1,6 +1,7 @@
 import React from 'react';
 
 export default function RequestView({ isOpen, vehicleInfo, onClose }) {
+  // console.log("Full Vehicle Data:", vehicleInfo);
   if (!isOpen || !vehicleInfo) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/40">
@@ -18,7 +19,7 @@ export default function RequestView({ isOpen, vehicleInfo, onClose }) {
         )}
 
         <div className="space-y-2 text-sm">
-          <p><strong>Name:</strong> {vehicleInfo.owner_name}</p>
+          <p><strong>Name As per RC:</strong> {vehicleInfo.owner_name}</p>
           <p><strong>Email:</strong> {vehicleInfo.email}</p>
           <p><strong>Registration Number:</strong> {vehicleInfo.registrationNum}</p>
           <p><strong>Car Name:</strong> {vehicleInfo.carName}</p>
@@ -27,10 +28,11 @@ export default function RequestView({ isOpen, vehicleInfo, onClose }) {
           <p><strong>Seat:</strong> {vehicleInfo.seat}</p>
           <p><strong>Features:</strong> {vehicleInfo.features}</p>
           <p><strong>FuelType:</strong> {vehicleInfo.fuelType}</p>
-          <p><strong>Price Per KM:</strong> {vehicleInfo.price_per_km}</p>
+          <p><strong>Price Per Day:</strong> {vehicleInfo.pricePerDay}</p>
           <p><strong>Model Year:</strong> {vehicleInfo.modelYear}</p>
           <p><strong>Status:</strong> {vehicleInfo.status}</p>
           <p><strong>Description:</strong> {vehicleInfo.description}</p>
+          <p><strong>Location:</strong> {vehicleInfo.city_name|| "Location not available" }</p>
         </div>
 
         <button
