@@ -44,21 +44,31 @@ export default function BasicTable() {
     getVehicleTable();
   }, []);
 
-  // Function ko update karo
 const handleAction = (regNum, actionType) => {
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
-      confirmButton: "bg-green-500 text-white px-3 py-1.5 rounded-md",
-      cancelButton: "bg-red-500 text-white px-3 py-1.5 rounded-md ml-2",
+      confirmButton: actionType === 'approve' 
+        ? "cursor-pointer inline-flex items-center justify-center px-7 py-3 mx-2 rounded-xl text-base font-semibold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 transition-all duration-200 shadow-md shadow-blue-500/20 tracking-wide min-w-[130px]"
+        : "cursor-pointer inline-flex items-center justify-center px-7 py-3 mx-2 rounded-xl text-base font-semibold text-white bg-red-500 hover:bg-red-600 active:scale-95 transition-all duration-200 shadow-md shadow-red-500/20 tracking-wide min-w-[130px]",
+      
+      cancelButton: "cursor-pointer inline-flex items-center justify-center px-7 py-3 mx-2 rounded-xl text-base font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 dark:bg-[#161b22] dark:text-gray-300 dark:hover:bg-[#21262d] dark:border dark:border-gray-800 active:scale-95 transition-all duration-200 tracking-wide min-w-[130px]",
+      
+      actions: "flex flex-wrap items-center justify-center gap-4 mt-6 w-full", 
+      popup: "rounded-2xl shadow-2xl p-8 bg-white border border-gray-100 dark:bg-[#0d1117] dark:border-gray-800 max-w-[90vw] sm:max-w-md transition-all",
+      title: "text-xl font-bold text-gray-900 dark:text-white pt-3 tracking-wide",
+      htmlContainer: "text-sm text-gray-500 dark:text-gray-400 mt-3 font-medium leading-relaxed px-2"
     },
     buttonsStyling: false,
   });
 
+  const successConfirmClass = "cursor-pointer inline-flex items-center justify-center px-7 py-3 rounded-xl text-base font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-all shadow-md min-w-[120px]";
+
   swalWithBootstrapButtons
     .fire({
-      title: "Are you sure?",
-      text: `You want to ${actionType} this vehicle?`, 
+      title: "Confirm Authorization",
+      html: `Are you absolute sure you want to <span class="${actionType === 'approve' ? 'text-blue-500 font-bold' : 'text-red-500 font-bold'} uppercase">${actionType}</span> this vehicle request?`, 
       icon: "warning",
+      iconColor: actionType === 'approve' ? '#3b82f6' : '#ef4444',
       showCancelButton: true,
       confirmButtonText: `Yes, ${actionType} it!`,
       cancelButtonText: "No, cancel!",
@@ -67,24 +77,38 @@ const handleAction = (regNum, actionType) => {
     .then(async (result) => {
       if (result.isConfirmed) {
         try {
-          // IMPORTANT: Status 'approve' ya 'reject' hi bhej rahe hain backend logic ke liye
           await axios.post(`http://localhost:3006/vehicle-approve`, {
             registrationNum: regNum,
-            status: actionType // 'approve' ya 'reject'
+            status: actionType
           });
 
           swalWithBootstrapButtons.fire({
-            title: actionType === 'approve' ? "Approved!" : "Rejected!",
-            text: `Vehicle ${actionType}d successfully.`,
+            title: actionType === 'approve' ? "Authorized Successfully!" : "Rejected Instance!",
+            html: `Vehicle credentials have been flagged as <span class="font-bold">${actionType}d</span> instantly.`,
             icon: "success",
+            iconColor: "#10b981",
+            customClass: {
+              confirmButton: successConfirmClass,
+              popup: "rounded-2xl p-8 bg-white dark:bg-[#0d1117] border border-gray-100 dark:border-gray-800 max-w-[90vw] sm:max-w-md",
+              title: "text-xl font-bold text-gray-900 dark:text-white pt-3",
+              htmlContainer: "text-sm text-gray-500 dark:text-gray-400 mt-3"
+            }
           });
 
-          // Table se row remove karna
           setRows((prev) => prev.filter((car) => car.registrationNum !== regNum));
 
         } catch (err) {
           console.error(err);
-          Swal.fire("Error", "Something went wrong", "error");
+          Swal.fire({
+            title: "Execution Error",
+            text: "Something went wrong during data commit workflow.",
+            icon: "error",
+            iconColor: "#ef4444",
+            customClass: {
+              confirmButton: "cursor-pointer inline-flex items-center justify-center px-7 py-3 rounded-xl text-base font-semibold text-white bg-red-500 hover:bg-red-600 transition-all min-w-[120px]",
+              popup: "rounded-2xl p-8 bg-white dark:bg-[#0d1117] border border-gray-100 dark:border-gray-800"
+            }
+          });
         }
       }
     });
@@ -101,10 +125,10 @@ const handleAction = (regNum, actionType) => {
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage,
   );
-  async function VehicleInfo(email) {
-    if (email === undefined || email === null) return;
+  async function VehicleInfo(carid) {
+    if (carid === undefined || carid === null) return;
     try {
-      const res = await axios.get(`http://localhost:3006/view-vehicle-information/${email}`);
+      const res = await axios.get(`http://localhost:3006/view-vehicle-information/${carid}`);
        const data = Array.isArray(res.data) ? res.data[0] : res.data;
       setVehicleInfo(data)
       setIsModalOpen(true);
@@ -218,7 +242,7 @@ const handleAction = (regNum, actionType) => {
                 </TableCell>
                 <TableCell className="cursor-pointer !text-black dark:!text-white">
                   <div>
-                    <button onClick={() => VehicleInfo(row.email)}><FaEye /></button>
+                    <button onClick={() => VehicleInfo(row.carid)}><FaEye /></button>
                   </div>
                 </TableCell>
                 <TableCell>

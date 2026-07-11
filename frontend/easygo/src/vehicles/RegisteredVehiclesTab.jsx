@@ -220,7 +220,6 @@ export default function RegisteredVehicles() {
           sx={{
             bgcolor: "transparent",
 
-            // 🔥 MAIN FIX
             "& .MuiTablePagination-toolbar": {
               color: "#000",
             },
