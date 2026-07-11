@@ -9,7 +9,7 @@ import Financial from "./Financial";
 import { ToastContainer } from "react-toastify";
 import ProtectedRoute from "./ProtectedRoute";
 import { StyledEngineProvider } from "@mui/material";
-import Client from "./client/CLient";
+import Client from "./client/Client";
 // import "./App.css";
 
 function App() {
