@@ -1,67 +1,180 @@
 import React from 'react';
-import { X, User, Mail, Phone, MapPin, Calendar, CreditCard, DollarSign, Briefcase, Building2 } from "lucide-react";
+import { X, Mail, Phone, Calendar, CreditCard, DollarSign, Briefcase, Building2 } from "lucide-react";
+const DetailItem = ({ icon:icon , label, value, iconColor }) => (
+  <div 
+    className="flex items-start gap-4 transition-all duration-200"
+    style={{
+      backgroundColor: "rgba(22, 27, 39, 0.5)",
+      border: "1px solid #1f2937",
+      borderRadius: "12px",
+      padding: "12px 16px"
+    }}
+  >
+    <div 
+      className="flex items-center justify-center"
+      style={{
+        padding: "10px",
+        backgroundColor: "#161b27",
+        border: "1px solid #374151",
+        borderRadius: "10px",
+        marginTop: "2px"
+      }}
+    >
+      <Icon className={iconColor} size={16} />
+    </div>
+    <div style={{ flex: 1, minWidth: 0 }}>
+      <p className="text-gray-500 uppercase tracking-wider m-0" style={{ fontSize: "10px", fontW_bold: "bold" }}>{label}</p>
+      <p className="text-gray-200 m-0 truncate" style={{ fontSize: "14px", fontWeight: "600", marginTop: "4px" }}>{value || 'N/A'}</p>
+    </div>
+  </div>
+);
 
 export default function ViewEmployeeModal({ isOpen, employee, onClose }) {
   if (!isOpen || !employee) return null;
 
-  const DetailItem = ({ icon: Icon, label, value, color }) => (
-    <div className="flex items-start gap-4 p-3 rounded-2xl hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors group">
-      <div className={`p-2 rounded-xl ${color} bg-opacity-10 dark:bg-opacity-20 transition-transform group-hover:scale-110`}>
-        <Icon className={color.replace('bg-', 'text-')} size={18} />
-      </div>
-      <div>
-        <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-500">{label}</p>
-        <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mt-0.5">{value || 'N/A'}</p>
-      </div>
-    </div>
-  );
-
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <div className="fixed inset-0 bg-zinc-950/40 backdrop-blur-sm" onClick={onClose}></div>
+    <div 
+      className="fixed inset-0 z-[100] flex items-center justify-center"
+      style={{ 
+        backgroundColor: "rgba(10, 15, 30, 0.7)", 
+        backdropFilter: "blur(12px)",
+        padding: "16px"
+      }}
+    >
+      <div className="fixed inset-0" onClick={onClose} style={{ cursor: "default" }}></div>
       
-      <div className="relative w-full max-w-lg bg-white dark:bg-zinc-900 rounded-[2.5rem] shadow-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden animate-in zoom-in-95 duration-200">
-        {/* Header Profile Section */}
-        <div className="bg-gradient-to-br from-blue-600 to-indigo-700 p-8 text-white relative">
-          <button onClick={onClose} className="absolute top-6 right-6 p-2 bg-white/10 hover:bg-white/20 rounded-xl transition-all">
-            <X size={20} />
+      <div 
+        className="relative w-full flex flex-col border border-gray-800 animate-in zoom-in-95 duration-200"
+        style={{ 
+          backgroundColor: "#0d1117",
+          maxWidth: "540px",
+          borderRadius: "16px",
+          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.7)",
+          maxHeight: "90vh",
+          overflow: "hidden"
+        }}
+      >
+        
+        <div 
+          className="relative border-b border-gray-800"
+          style={{ 
+            padding: "24px 28px",
+            backgroundColor: "#0f141c",
+            borderRadius: "16px 16px 0 0"
+          }}
+        >
+          <button 
+            onClick={onClose} 
+            style={{
+              position: "absolute",
+              top: "20px",
+              right: "20px",
+              padding: "8px",
+              backgroundColor: "rgba(22, 27, 39, 0.6)",
+              border: "1px solid #1f2937",
+              borderRadius: "10px",
+              color: "#9ca3af",
+              cursor: "pointer",
+              lineHeight: "0"
+            }}
+            className="hover:text-white transition-colors"
+          >
+            <X size={15} />
           </button>
           
-          <div className="flex items-center gap-6 mt-2">
-            <div className="w-20 h-20 rounded-3xl bg-white/20 backdrop-blur-md flex items-center justify-center text-3xl font-bold border border-white/30 shadow-xl">
+          <div 
+            className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left"
+            style={{ gap: "20px" }}
+          >
+            <div 
+              className="flex items-center justify-center text-blue-500 font-black uppercase shadow-inner"
+              style={{
+                width: "72px",
+                height: "72px",
+                backgroundColor: "#161b27",
+                border: "1px solid #1f2937",
+                borderRadius: "14px",
+                fontSize: "26px"
+              }}
+            >
               {employee.name?.charAt(0)}
             </div>
-            <div>
-              <h2 className="text-2xl font-bold tracking-tight">{employee.name}</h2>
-              <p className="text-blue-100 flex items-center gap-1.5 text-sm mt-1">
-                <Briefcase size={14} /> {employee.rolename || 'Employee'}
+            
+            <div style={{ flex: 1 }}>
+              <h2 className="text-xl font-extrabold text-white tracking-tight m-0">{employee.name}</h2>
+              <p className="text-gray-400 flex items-center justify-center sm:justify-start gap-1.5 text-xs font-medium m-0 mt-1.5">
+                <Briefcase size={13} className="text-blue-500" /> {employee.rolename || 'Employee'}
               </p>
-              <span className="inline-block mt-3 px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-widest border border-white/20">
-                ID: #{String(employee.eid).padStart(3, "0")}
-              </span>
+              <div style={{ marginTop: "10px" }}>
+                <span 
+                  className="inline-block text-gray-400 font-bold uppercase tracking-wider"
+                  style={{
+                    padding: "3px 10px",
+                    backgroundColor: "#161b27",
+                    border: "1px solid #1f2937",
+                    borderRadius: "6px",
+                    fontSize: "10px"
+                  }}
+                >
+                  ID: #{String(employee.eid).padStart(3, "0")}
+                </span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Details Grid */}
-        <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-2 bg-white dark:bg-zinc-900">
-          <DetailItem icon={Mail} label="Email Address" value={employee.email} color="bg-blue-500" />
-          <DetailItem icon={Phone} label="Contact" value={employee.mobile} color="bg-emerald-500" />
-          <DetailItem icon={CreditCard} label="Aadhar" value={employee.aadhar} color="bg-amber-500" />
-          <DetailItem icon={DollarSign} label="Salary" value={`₹${employee.salary?.toLocaleString('en-IN')}`} color="bg-purple-500" />
-          <DetailItem icon={Building2} label="Department" value={employee.deptname} color="bg-pink-500" />
-          <DetailItem icon={Calendar} label="Joining Date" value={employee.joining_Date?.split("T")[0]} color="bg-cyan-500" />
+        <div 
+          className="overflow-y-auto scrollbar-thin scrollbar-thumb-gray-800"
+          style={{ 
+            padding: "24px 28px", 
+            maxHeight: "50vh",
+            display: "flex",
+            flexDirection: "column",
+            gap: "14px"
+          }}
+        >
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <DetailItem icon={Mail} label="Corporate Email" value={employee.email} iconColor="text-blue-400" />
+            <DetailItem icon={Phone} label="Contact Line" value={employee.mobile} iconColor="text-emerald-400" />
+            <DetailItem icon={CreditCard} label="Aadhar Registry" value={employee.aadhar ? "[Aadhaar Redacted]" : "N/A"} iconColor="text-amber-400" />
+            <DetailItem icon={DollarSign} label="Monthly Payout" value={`₹${employee.salary?.toLocaleString('en-IN')}`} iconColor="text-purple-400" />
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <DetailItem icon={Building2} label="Assigned Department" value={employee.deptname} iconColor="text-pink-400" />
+            <DetailItem icon={Calendar} label="Joining Date" value={employee.joining_Date?.split("T")[0]} iconColor="text-cyan-400" />
+          </div>
         </div>
 
-        {/* Footer */}
-        <div className="p-6 pt-0">
+        <div 
+          className="flex items-center justify-end"
+          style={{ 
+            padding: "20px 28px", 
+            borderTop: "1px solid #1f2937",
+            backgroundColor: "#0f141c",
+            borderRadius: "0 0 16px 16px"
+          }}
+        >
           <button
             onClick={onClose}
-            className="w-full py-3 rounded-2xl font-bold bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all active:scale-95"
+            style={{
+              padding: "10px 24px",
+              backgroundColor: "#1f2937",
+              border: "1px solid #374151",
+              borderRadius: "10px",
+              fontSize: "12px",
+              fontWeight: "bold",
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
+              color: "#d1d5db",
+              cursor: "pointer"
+            }}
+            className="hover:text-white hover:bg-gray-700 transition-all duration-150 active:scale-95"
           >
-            Close Details
+            Close Profile
           </button>
         </div>
+
       </div>
     </div>
   );
