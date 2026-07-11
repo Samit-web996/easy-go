@@ -1,6 +1,6 @@
 import React from 'react';
 import { X, Mail, Phone, Calendar, CreditCard, DollarSign, Briefcase, Building2 } from "lucide-react";
-const DetailItem = ({ icon:icon , label, value, iconColor }) => (
+const DetailItem = ({ icon:Icon , label, value, iconColor }) => (
   <div 
     className="flex items-start gap-4 transition-all duration-200"
     style={{
