@@ -6,7 +6,7 @@ vehicleRouter.get('/vehicle-req' ,getVehicleTable);
 vehicleRouter.get('/view-cars' ,carCard)
 vehicleRouter.post('/vehicle-approve' ,approveVehicle); 
 vehicleRouter.get('/vehicle-owner-information/:email' , ve_host_info);
-vehicleRouter.get('/view-vehicle-information/:email' , viewVehicleInfo)
+vehicleRouter.get('/view-vehicle-information/:carid' , viewVehicleInfo)
 vehicleRouter.post("/update-vehicle-status", updateVehicleStatus);
 
 module.exports = vehicleRouter;

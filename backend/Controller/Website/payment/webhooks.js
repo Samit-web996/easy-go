@@ -1,17 +1,20 @@
 const crypto = require("crypto");
 const database = require("../../../Model/dbConnect");
 const sendEmail = require("../../nodemailer");
+const Razorpay = require("razorpay")
 
 const handleRazorpayWebhook = async (req, res) => {
   const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
   const signature = req.headers["x-razorpay-signature"];
 
   // 1. Signature Verification
-  const shasum = crypto.createHmac("sha256", secret);
-  shasum.update(JSON.stringify(req.body));
-  const digest = shasum.digest("hex");
+const isValid = Razorpay.validateWebhookSignature(
+    JSON.stringify(req.body),
+    signature,
+    secret
+  );
 
-  if (digest !== signature) {
+  if (!isValid) {
     console.log("Invalid Signature! ❌");
     return res.status(400).send("Invalid signature");
   }
@@ -111,7 +114,7 @@ const handleRazorpayWebhook = async (req, res) => {
             Bhopal, Madhya Pradesh, India.
         </div>
     </div>
-    `, // Add your full HTML here
+    `, 
         });
         console.log("✅ Confirmation Email Sent.");
       } catch (mailErr) {

@@ -62,25 +62,41 @@ export default function CustomizedTables() {
   }, []); 
   // CustomizedTables.js ke andar
 const handleStatusUpdate = async (uid, newStatus) => {
+  // ⚡ Premium SweetAlert configuration tailored for Client KYC verification
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
-      confirmButton: "btn btn-success mx-2",
-      cancelButton: "btn btn-danger mx-2"
+      // Dynamic color action assignment for Confirm Button based on state type
+      confirmButton: newStatus === 'verified'
+        ? "cursor-pointer inline-flex items-center justify-center px-7 py-2.5 mx-2 rounded-full text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 transition-all shadow-md shadow-blue-500/20 tracking-wide min-w-[130px]"
+        : "cursor-pointer inline-flex items-center justify-center px-7 py-2.5 mx-2 rounded-full text-sm font-bold text-white bg-red-500 hover:bg-red-600 active:scale-95 transition-all shadow-md shadow-red-500/20 tracking-wide min-w-[130px]",
+      
+      cancelButton: "cursor-pointer inline-flex items-center justify-center px-7 py-2.5 mx-2 rounded-full text-sm font-bold text-white bg-[#161b22] hover:bg-[#21262d] active:scale-95 transition-all tracking-wide min-w-[130px] border border-gray-800",
+      
+      // Structural layers optimization
+      actions: "flex flex-wrap items-center justify-center gap-3 mt-6 w-full",
+      popup: "rounded-2xl shadow-2xl p-8 bg-white dark:bg-[#0d1117] border border-gray-100 dark:border-gray-800 max-w-[90vw] sm:max-w-md",
+      title: "text-2xl font-bold text-gray-700 dark:text-gray-200 pt-2 tracking-wide",
+      htmlContainer: "text-base text-gray-500 dark:text-gray-400 mt-3 font-medium leading-relaxed"
     },
     buttonsStyling: false
   });
 
-  // 1. Pehle Alert show hoga
+  // Re-usable premium design classes for follow-up message layouts
+  const secondaryConfirmClass = "cursor-pointer inline-flex items-center justify-center px-7 py-2.5 rounded-full text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all min-w-[120px]";
+
+  // 1. Structural Confirmation Prompt
   swalWithBootstrapButtons.fire({
-    title: `Are you sure you want to ${newStatus}?`,
-    text: "You can change this status again later if needed.",
+    title: "Confirm Authorization",
+    html: `Are you absolute sure you want to <span class="${newStatus === 'verified' ? 'text-blue-600 font-bold' : 'text-red-500 font-bold'} uppercase">${newStatus === 'verified' ? 'APPROVE' : 'REJECT'}</span> this client verification?`,
     icon: "warning",
+    iconColor: newStatus === 'verified' ? '#2563eb' : '#ef4444',
     showCancelButton: true,
-    confirmButtonText: `Yes, ${newStatus} it!`,
+    confirmButtonText: newStatus === 'verified' ? "Yes, approve it!" : "Yes, reject it!",
     cancelButtonText: "No, cancel!",
     reverseButtons: true
   }).then(async (result) => {
-    // 2. Agar admin "Yes" click karta hai
+    
+    // 2. Database transaction call
     if (result.isConfirmed) {
       try {
         const res = await axios.post('http://localhost:3006/api/update-client-status', {
@@ -89,35 +105,51 @@ const handleStatusUpdate = async (uid, newStatus) => {
         });
 
         if (res.data.success) {
-          // UI update logic
           setUsers((prev) =>
             prev.map((user) =>
               user.uid === uid ? { ...user, verification_status: newStatus } : user
             )
           );
 
-          // Success Alert
+          // Success Alert Flow
           swalWithBootstrapButtons.fire({
-            title: "Updated!",
-            text: `Client has been ${newStatus}.`,
-            icon: "success"
+            title: newStatus === 'verified' ? "Authorized Successfully!" : "Status Revoked!",
+            html: `Client credentials have been flagged as <span class="font-bold">${newStatus}</span> instantly.`,
+            icon: "success",
+            iconColor: "#10b981",
+            customClass: {
+              confirmButton: secondaryConfirmClass,
+              popup: "rounded-2xl p-8 bg-white dark:bg-[#0d1117] border border-gray-100 dark:border-gray-800 max-w-[90vw] sm:max-w-md",
+              title: "text-xl font-bold text-gray-900 dark:text-white pt-2",
+              htmlContainer: "text-sm text-gray-500 dark:text-gray-400 mt-2"
+            }
           });
         }
       } catch (err) {
         console.error("Status update error:", err);
         swalWithBootstrapButtons.fire({
-          title: "Error",
-          text: "Failed to update status on server.",
-          icon: "error"
+          title: "Execution Error",
+          text: "Failed to update status on server framework.",
+          icon: "error",
+          iconColor: "#ef4444",
+          customClass: {
+            confirmButton: "cursor-pointer inline-flex items-center justify-center px-7 py-2.5 rounded-full text-sm font-bold text-white bg-red-500 hover:bg-red-600 transition-all min-w-[120px]",
+            popup: "rounded-2xl p-8 bg-white dark:bg-[#0d1117] border border-gray-100 dark:border-gray-800"
+          }
         });
       }
     } 
-    // 3. Agar admin cancel karta hai, toh kuch nahi hoga (status pending hi rahega)
+    
     else if (result.dismiss === Swal.DismissReason.cancel) {
       swalWithBootstrapButtons.fire({
-        title: "Cancelled",
-        text: "No changes were made.",
-        icon: "info"
+        title: "Cancelled Action",
+        text: "Client validation check remains unchanged.",
+        icon: "info",
+        iconColor: "#3b82f6",
+        customClass: {
+          confirmButton: secondaryConfirmClass,
+          popup: "rounded-2xl p-8 bg-white dark:bg-[#0d1117] border border-gray-100 dark:border-gray-800"
+        }
       });
     }
   });
@@ -152,20 +184,23 @@ const handleStatusUpdate = async (uid, newStatus) => {
               <StyledTableCell align="right">{users.mobile_no}</StyledTableCell>
               <StyledTableCell align="right">{users.verification_status || "Pending"}</StyledTableCell>
               <StyledTableCell align="right">
-  <div className="flex gap-2 justify-end">
-    <button 
-      onClick={() => handleStatusUpdate(users.uid, 'verified')}
-      className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-xs transition"
-    >
-      Verify
-    </button>
-    <button 
-      onClick={() => handleStatusUpdate(users.uid, 'rejected')}
-      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs transition"
-    >
-      Reject
-    </button>
-  </div>
+  <div className="flex items-center justify-center gap-2.5 w-full p-1">
+  {/* Approve Button: Clean Green Solid Capsule */}
+  <button 
+    onClick={() => handleStatusUpdate(users.uid, 'verified')}
+    className="cursor-pointer inline-flex items-center justify-center px-4 py-1.5 rounded-full text-xs font-semibold text-white bg-[#00c853] hover:bg-[#00e676] active:scale-95 transition-all duration-150 min-w-[75px] tracking-wide"
+  >
+    Approve
+  </button>
+
+  {/* Reject Button: Clean Red Solid Capsule */}
+  <button 
+    onClick={() => handleStatusUpdate(users.uid, 'rejected')}
+    className="cursor-pointer inline-flex items-center justify-center px-4 py-1.5 rounded-full text-xs font-semibold text-white bg-[#ff2d46] hover:bg-[#ff4d63] active:scale-95 transition-all duration-150 min-w-[75px] tracking-wide"
+  >
+    Reject
+  </button>
+</div>
 </StyledTableCell>
             </StyledTableRow>
           ))}

@@ -1,5 +1,8 @@
 const { exist } = require("joi");
 const database = require("../../../../Model/dbConnect");
+const path = require('path');
+const sharp = require('sharp');
+const fs = require('fs');
 
 const addVehicle = async (req, res) => {
   const {
@@ -17,8 +20,6 @@ const addVehicle = async (req, res) => {
     modelYear,
     description,
   } = req.body;
-  
-  const image = req.file ? req.file.filename : null;
 
   const chkRegExist = "SELECT * FROM registered_vehicle WHERE registrationNum = ?";
   database.query(chkRegExist, [registrationNum], async (err, result) => {
@@ -27,26 +28,32 @@ const addVehicle = async (req, res) => {
     }
 
     if (result.length > 0) {
+      // Fail-safe: Agar vehicle already registered hai toh uploaded file ko pehle hi remove kar do
+      if (req.file && fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
       return res.status(400).json({
         success: false,
         message: "This vehicle is already registered",
       });
     }
 
-        let finalImageName = null;
+    let finalImageName = null;
+    let outputPath = null;
 
     if (req.file) {
       try {
         const inputPath = req.file.path;
         finalImageName = `optimized-${Date.now()}.webp`; 
-        
-        const outputPath = path.join(req.file.destination, finalImageName); 
+        outputPath = path.join(req.file.destination, finalImageName); 
 
+        // Sharp processing engine
         await sharp(inputPath)
           .webp({ quality: 80 }) 
-          .resize(1200, 800, { fit: 'inside', withoutEnlargement: true }) // Responsive sizing
+          .resize(1200, 800, { fit: 'inside', withoutEnlargement: true }) 
           .toFile(outputPath);
 
+        // Original heavy file ko remove karo
         if (fs.existsSync(inputPath)) {
           fs.unlinkSync(inputPath);
         }
@@ -57,8 +64,9 @@ const addVehicle = async (req, res) => {
     }
 
     const sql =
-      "INSERT INTO vehicle_req(owner_name,email,registrationNum,loc_id , carName , brand , model , seat , features , fuelType ,pricePerDay , modelYear ,image , description) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+      "INSERT INTO vehicle_req(owner_name, email, registrationNum, loc_id, carName, brand, model, seat, features, fuelType, pricePerDay, modelYear, image, description) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     
+    // 🎯 FIX: 'image' ki jagah ab 'finalImageName' (.webp waala naam) bhej rahe hain
     const values = [
       owner_name,
       email,
@@ -72,13 +80,17 @@ const addVehicle = async (req, res) => {
       fuelType,
       pricePerDay,
       modelYear,
-      image,
+      finalImageName, // 👈 Successfully updated variable mapping
       description,
     ];
 
     database.query(sql, values, (err, insertResult) => {
       if (err) {
         console.log(err);
+        // Fail-safe: Agar db logic fail kare toh optimized webp file clean kar do
+        if (outputPath && fs.existsSync(outputPath)) {
+          fs.unlinkSync(outputPath);
+        }
         return res.status(500).json({ success: false, message: "Database Error during insertion" });
       } else {
         return res.status(200).json({ success: true, message: "Vehicle added successfully" });

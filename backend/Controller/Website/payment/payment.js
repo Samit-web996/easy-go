@@ -23,12 +23,12 @@ const options = async (req,res) => {
 
     const bookingQuery = `INSERT INTO bookings 
         (user_id, car_id, order_id, total_amount,start_date, end_date, payment_status) 
-        VALUES (?, ?, ?, ?,?,?, 'PENDING')`;
+        VALUES (?,?,?,?,?,?, 'PENDING')`;
 
     database.query(bookingQuery, [uid, car_id, order.id, amount,start_date, end_date], (err) => {
       if (err) {
         console.error("Database Booking Error:", err.message);
-        return res.status(500).json({ success: false, message: "DB mein booking save nahi hui" });
+        return res.status(500).json({ success: false, message: "The booking was not saved in the app." });
       }
 
 
