@@ -4,8 +4,6 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./login.css";
 import useAuthStores from "../store/authStore";
-//  import {Link} from 'react-router-dom'
-//  import Signup from "./signUp";
 
 function Login() {
   const [username, setusername] = useState("");

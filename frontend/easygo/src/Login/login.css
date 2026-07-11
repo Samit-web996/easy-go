@@ -51,7 +51,7 @@ html, body {
     width: 100%;
     height: 100%;
     background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), 
-                      url('./ZEPETO BACKGROUND.jpg');
+                      url('/zepeto-background.jpg');
     background-size: cover;
     background-position: center;
     filter: blur(4px);
