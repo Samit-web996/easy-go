@@ -1,6 +1,6 @@
 const express = require("express");
 const employeeRouter = express.Router();
-const {getEmployees, getEmployee,updateEmployee} = require("../../../Controller/Admin/employeeController/employeeController");
+const {getEmployees, getEmployee,updateEmployee} = require("../../../Controller/admin/employeeController/employeeController");
 
 
 // employeeRouter.put("/update-role", updateRole);

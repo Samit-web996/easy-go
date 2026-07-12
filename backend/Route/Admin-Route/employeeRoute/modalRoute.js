@@ -1,6 +1,6 @@
 const express = require('express');
 const modalRouter = express.Router();
-const {addEmployees, getEmployees ,getRole, getDept} = require('../../../Controller/Admin/employeeController/employeeModal');
+const {addEmployees, getEmployees ,getRole, getDept} = require('../../../Controller/admin/employeeController/employeeModal');
 
 modalRouter.post('/add-employee', addEmployees);
 modalRouter.get('/get-employees', getEmployees);    
