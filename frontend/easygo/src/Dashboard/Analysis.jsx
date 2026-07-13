@@ -34,7 +34,7 @@ export function CarUsageChart() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3006/car-category-graph")
+      .get(`${import.meta.env.VITE_API_URL || 'https://easygo-backend.onrender.com'}/car-category-graph`)
       .then((res) => {
         if (res.data.success) {
           const formattedData = res.data.data.map((item, index) => ({

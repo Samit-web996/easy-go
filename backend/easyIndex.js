@@ -8,10 +8,20 @@ app.use(cors({
     origin : ["http://localhost:5173","http://localhost:5174","http://localhost:3000"],
     credentials:true
 }))
+// app.use(cors({
+//   origin: ['https://easygo-cars-admin.vercel.app',"http://localhost:5173"], 
+//   credentials: true,
+//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//   allowedHeaders: ['Content-Type', 'Authorization']
+// }));
 const database = require('./Model/dbConnect')
 const cron = require('node-cron')
 
 port = 3006;
+
+app.get("/test", (req, res) => {
+    res.send("Test Route Working");
+});
 
 const signupRouter = require('./Route/Admin-Route/signupRoute/signupRoute')
 app.use('/', signupRouter)

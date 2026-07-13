@@ -25,23 +25,10 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
     backgroundColor: theme.palette.action.hover,
   },
-  // hide last border
   '&:last-child td, &:last-child th': {
     border: 0,
   },
 }));
-
-// function createData(name, calories, fat, carbs, protein) {
-//   return { name, calories, fat, carbs, protein };
-// }
-
-// const rows = [
-//   createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-//   createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-//   createData('Eclair', 262, 16.0, 24, 6.0),
-//   createData('Cupcake', 305, 3.7, 67, 4.3),
-//   createData('Gingerbread', 356, 16.0, 49, 3.9),
-// ];
 
 export default function CustomizedTables() {
 
@@ -51,8 +38,9 @@ export default function CustomizedTables() {
    useEffect(() => {
     const fetchClient = async () => {
       try {
-        const res = await axios.get('http://localhost:3006/client-approval');
-        setUsers(res.data); // Database se aaya array state mein set ho gaya
+        const baseUrl = import.meta.env.VITE_API_URL || 'https://easygo-backend.onrender.com';
+        const res = await axios.get(`${baseUrl}/client-approval`);
+        setUsers(res.data); 
       } catch (err) {
         console.error(err);
         setError(err.message);
@@ -60,19 +48,15 @@ export default function CustomizedTables() {
     };
     fetchClient();
   }, []); 
-  // CustomizedTables.js ke andar
 const handleStatusUpdate = async (uid, newStatus) => {
-  // ⚡ Premium SweetAlert configuration tailored for Client KYC verification
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
-      // Dynamic color action assignment for Confirm Button based on state type
       confirmButton: newStatus === 'verified'
         ? "cursor-pointer inline-flex items-center justify-center px-7 py-2.5 mx-2 rounded-full text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 transition-all shadow-md shadow-blue-500/20 tracking-wide min-w-[130px]"
         : "cursor-pointer inline-flex items-center justify-center px-7 py-2.5 mx-2 rounded-full text-sm font-bold text-white bg-red-500 hover:bg-red-600 active:scale-95 transition-all shadow-md shadow-red-500/20 tracking-wide min-w-[130px]",
       
       cancelButton: "cursor-pointer inline-flex items-center justify-center px-7 py-2.5 mx-2 rounded-full text-sm font-bold text-white bg-[#161b22] hover:bg-[#21262d] active:scale-95 transition-all tracking-wide min-w-[130px] border border-gray-800",
       
-      // Structural layers optimization
       actions: "flex flex-wrap items-center justify-center gap-3 mt-6 w-full",
       popup: "rounded-2xl shadow-2xl p-8 bg-white dark:bg-[#0d1117] border border-gray-100 dark:border-gray-800 max-w-[90vw] sm:max-w-md",
       title: "text-2xl font-bold text-gray-700 dark:text-gray-200 pt-2 tracking-wide",
@@ -81,10 +65,8 @@ const handleStatusUpdate = async (uid, newStatus) => {
     buttonsStyling: false
   });
 
-  // Re-usable premium design classes for follow-up message layouts
   const secondaryConfirmClass = "cursor-pointer inline-flex items-center justify-center px-7 py-2.5 rounded-full text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all min-w-[120px]";
 
-  // 1. Structural Confirmation Prompt
   swalWithBootstrapButtons.fire({
     title: "Confirm Authorization",
     html: `Are you absolute sure you want to <span class="${newStatus === 'verified' ? 'text-blue-600 font-bold' : 'text-red-500 font-bold'} uppercase">${newStatus === 'verified' ? 'APPROVE' : 'REJECT'}</span> this client verification?`,
@@ -96,7 +78,6 @@ const handleStatusUpdate = async (uid, newStatus) => {
     reverseButtons: true
   }).then(async (result) => {
     
-    // 2. Database transaction call
     if (result.isConfirmed) {
       try {
         const res = await axios.post('http://localhost:3006/api/update-client-status', {
@@ -111,7 +92,6 @@ const handleStatusUpdate = async (uid, newStatus) => {
             )
           );
 
-          // Success Alert Flow
           swalWithBootstrapButtons.fire({
             title: newStatus === 'verified' ? "Authorized Successfully!" : "Status Revoked!",
             html: `Client credentials have been flagged as <span class="font-bold">${newStatus}</span> instantly.`,

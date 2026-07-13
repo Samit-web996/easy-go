@@ -22,7 +22,7 @@ function Login() {
     try {
     let data = { username, password };
 
-    const res = await fetch("http://localhost:3006/admin/adminlogin", {
+    const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://easygo-backend.onrender.com'}/admin/adminlogin`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials : 'include',
