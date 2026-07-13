@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useState, useMemo, useEffect } from "react";
 import ViewEmployeeModal from "./View";
 import EditEmployeeModal from "./Edit";

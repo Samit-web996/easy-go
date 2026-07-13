@@ -7,9 +7,9 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { useEffect } from 'react';
-import axios from 'axios';
 import { useState } from 'react';
 import Swal from 'sweetalert2';
+import API from '../api';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -38,8 +38,8 @@ export default function CustomizedTables() {
    useEffect(() => {
     const fetchClient = async () => {
       try {
-        const baseUrl = import.meta.env.VITE_API_URL || 'https://easygo-backend.onrender.com';
-        const res = await axios.get(`${baseUrl}/client-approval`);
+        // const baseUrl = import.meta.env.VITE_API_URL || 'https://easygo-backend.onrender.com';
+        const res = await API.get('/client-approval');
         setUsers(res.data); 
       } catch (err) {
         console.error(err);
@@ -80,7 +80,7 @@ const handleStatusUpdate = async (uid, newStatus) => {
     
     if (result.isConfirmed) {
       try {
-        const res = await axios.post('http://localhost:3006/api/update-client-status', {
+        const res = await API.post('/api/update-client-status', {
           uid: uid,
           verification_status: newStatus
         });

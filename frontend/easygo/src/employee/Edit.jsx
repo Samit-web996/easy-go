@@ -1,5 +1,5 @@
 import React from "react";
-import axios from "axios";
+import API from "../api";
 import { toast } from "react-toastify";
 
 export default function EditEmployeeModal({
@@ -22,8 +22,8 @@ export default function EditEmployeeModal({
 
   const handleUpdate = async () => {
     try {
-      const res = await axios.patch(
-        `http://localhost:3006/update-emp/${editEmp.eid}`, editEmp);
+      const res = await API.patch(
+        `/update-emp/${editEmp.eid}`, editEmp);
       toast.success("Employee profile updated successfully!", {
         position: "top-right",
         autoClose: 2000,

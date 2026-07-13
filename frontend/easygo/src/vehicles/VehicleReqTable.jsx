@@ -8,7 +8,7 @@ import {
   TablePagination,
 } from "@mui/material";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import API from "../api";
 import Swal from "sweetalert2";
 import RightDrawer from "./RightDrawer";
 import RequestView from "./ReqView";
@@ -33,7 +33,7 @@ export default function BasicTable() {
   useEffect(() => {
     const getVehicleTable = async () => {
       try {
-        const result = await axios.get("http://localhost:3006/vehicle-req");
+        const result = await API.get("/vehicle-req");
 
         setRows(result.data);
       } catch (err) {
@@ -77,7 +77,7 @@ const handleAction = (regNum, actionType) => {
     .then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.post(`http://localhost:3006/vehicle-approve`, {
+          await API.post(`/vehicle-approve`, {
             registrationNum: regNum,
             status: actionType
           });
@@ -128,7 +128,7 @@ const handleAction = (regNum, actionType) => {
   async function VehicleInfo(carid) {
     if (carid === undefined || carid === null) return;
     try {
-      const res = await axios.get(`http://localhost:3006/view-vehicle-information/${carid}`);
+      const res = await API.get(`API/view-vehicle-information/${carid}`);
        const data = Array.isArray(res.data) ? res.data[0] : res.data;
       setVehicleInfo(data)
       setIsModalOpen(true);

@@ -1,19 +1,17 @@
 import { useEffect, useState } from "react";
 import AddEmployeeModal from "./modal";  
 import EmployeeTable from "./EmployeeTable";
-
+import API from "../api";
 function Employee() {
   const [ModalOpen, setModalOpen] = useState(false);
   // Employee data ke liye state (taaki dashboard cards dynamic ho sakein)
   const [data, setData] = useState([]);
 
-  const fetchEmployees = () => {
-    fetch("http://localhost:3006/employees")
-      .then(res => res.json())
-      .then(data => setData(data)) // Data set karna zaroori hai
-      .catch(err => console.error(err));
-  };
-
+const fetchEmployees = () => {
+  API.get("/employees")
+    .then(res => setData(res.data)) // Axios me data 'res.data' ke andar hota hai
+    .catch(err => console.error("Error fetching employees:", err));
+};
   useEffect(() => {
     fetchEmployees();
   }, []);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../api";
 import { toast } from "react-toastify";
 
 const AddEmployeeModal = ({ isOpen, onClose, onSuccess }) => {
@@ -21,7 +21,7 @@ const AddEmployeeModal = ({ isOpen, onClose, onSuccess }) => {
   useEffect(() => {
     const fetchrole = async () => {
       try {
-        const response = await axios.get("http://localhost:3006/get-role");
+        const response = await API.get("/get-role");
         setRole(response.data);
       } catch (error) {
         console.log(error);
@@ -34,7 +34,7 @@ const AddEmployeeModal = ({ isOpen, onClose, onSuccess }) => {
   useEffect(() => {
     const fetchDept = async () => {
       try {
-        const response = await axios.get("http://localhost:3006/get-dept");
+        const response = await API.get("/get-dept");
         setDept(response.data);
       } catch (error) {
         console.log(error);
@@ -53,7 +53,7 @@ const AddEmployeeModal = ({ isOpen, onClose, onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:3006/add-employee", employee);
+      await API.post("/add-employee", employee);
       if (onSuccess) {
         onSuccess();
       }

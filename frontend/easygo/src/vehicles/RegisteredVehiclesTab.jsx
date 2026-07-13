@@ -9,7 +9,7 @@ import {
   Button,
 } from "@mui/material";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import API from "../api";
 import RightDrawer from "./RightDrawer";
 
 export default function RegisteredVehicles() {
@@ -25,7 +25,7 @@ export default function RegisteredVehicles() {
       const newStatus =
         row.status === "AVAILABLE" ? "UNAVAILABLE" : "AVAILABLE";
 
-      await axios.post("http://localhost:3006/update-vehicle-status", {
+      await API.post("/update-vehicle-status", {
         carid: row.carid,
         status: newStatus,
       });
@@ -48,7 +48,7 @@ export default function RegisteredVehicles() {
   useEffect(() => {
     const getVehicleTable = async () => {
       try {
-        const result = await axios.get("http://localhost:3006/view-cars");
+        const result = await API.get("/view-cars");
         setRows(result.data);
       } catch (err) {
         console.error(err);

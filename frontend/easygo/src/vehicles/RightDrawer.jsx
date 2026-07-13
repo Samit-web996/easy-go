@@ -1,17 +1,19 @@
 import Drawer from "@mui/material/Drawer";
-import axios from "axios";
+import API from "../api";
 import { useEffect, useState } from "react";
 
 export default function RightDrawer({ open, onClose, data }) {
   const [info, setInfo] = useState(null);
+  const IMAGE_BASE_URL = import.meta.env.VITE_API_URL
+
 
 useEffect(() => {
   const getOwnerInfo = async () => {
     if (!data) return;
 
     try {
-      const res = await axios.get(
-        `http://localhost:3006/vehicle-owner-information/${data.email}`
+      const res = await API.get(
+        `/vehicle-owner-information/${data.email}`
       );
 
       const result = Array.isArray(res.data) ? res.data[0] : res.data; 
@@ -38,7 +40,7 @@ useEffect(() => {
         <div className="flex flex-col items-center mb-6">
           {info.profile_img ? (
             <img
-              src={`http://localhost:3006/uploads/${info.profile_img}`}
+              src={`IMAGE_BASE_URL/uploads/${info.profile_img}`}
               alt="profile"
               className="w-24 h-24 rounded-full object-cover border-4 border-indigo-500 shadow-lg"
             />

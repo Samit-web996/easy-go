@@ -2,6 +2,7 @@ import React from 'react';
 
 export default function RequestView({ isOpen, vehicleInfo, onClose }) {
   if (!isOpen || !vehicleInfo) return null;
+  const IMAGE_BASE_URL = import.meta.env.VITE_API_URL
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-md bg-black/60 transition-all duration-300">
@@ -26,11 +27,10 @@ export default function RequestView({ isOpen, vehicleInfo, onClose }) {
         {/* Main Body Content Wrapper with generous spacing */}
         <div className="p-6 space-y-6">
           
-          {/* Image Section (Added Margin Bottom for separation) */}
           {vehicleInfo.image && (
             <div className="relative group w-full h-56 sm:h-72 rounded-xl overflow-hidden shadow-lg bg-gray-100 dark:bg-gray-900 border border-gray-200/50 dark:border-white/5 mb-2">
               <img
-                src={`http://localhost:3006/uploads/${vehicleInfo.image}`}
+                src={`IMAGE_BASE_URL/uploads/${vehicleInfo.image}`}
                 alt="vehicle"
                 className="w-full h-full object-cover transform group-hover:scale-102 transition-transform duration-500"
                 onError={(e) => {

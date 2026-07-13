@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { CarUsageChart, RevenueProfitChart } from "./Analysis";
-import axios from "axios"; 
+import API from "../api";
 import { useEffect } from "react";
 
 export default function AdminDashboard() {
@@ -13,7 +13,7 @@ export default function AdminDashboard() {
 const [loading , setloading] = useState(true);
 
 useEffect(() => {
-  axios.get("http://localhost:3006/dashboard-data")
+  API.get("/dashboard-data")
   .then((res) => {
     if (res.data.success) {
       setStats(res.data.data);
@@ -29,7 +29,7 @@ const formatToIndianCurrency = (num) => {
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "INR",
-    maximumFractionDigits: 0, // Paise (.00) nahi dikhane ke liye
+    maximumFractionDigits: 0, 
   }).format(num);
 };
 
