@@ -88,26 +88,29 @@ app.use('/' , dashboardRouter);
 const graphRouter = require('./Route/Admin-Route/dashboardRoute/graphAnalysis');
 app.use('/' ,graphRouter);
 
-cron.schedule('0 * * * *', () => {
+cron.schedule('0 * * * *', async () => {
     console.log("Checking for ride completions...");
 
     const availabilityQuery = `
-    UPDATE registered_vehicle SET status = 'AVAILABLE'
-    WHERE carid IN (
-        SELECT car_id FROM bookings WHERE end_date <= NOW()
-        AND payment_status = 'PAID'
-    ) AND STATUS = 'UNAVAILABLE'`;
-    database.query(availabilityQuery , (err,result) => {
-        if (err) {
-            console.error("Cron Job Error:", err.message)
+        UPDATE registered_vehicle SET status = 'AVAILABLE'
+        WHERE carid IN (
+            SELECT car_id FROM bookings WHERE end_date <= NOW()
+            AND payment_status = 'PAID'
+        ) AND STATUS = 'UNAVAILABLE'`;
+
+    try {
+        // 💡 Promises me query ka result ek array hota hai jisme pehla element result/rows hota hai
+        const [result] = await database.query(availabilityQuery);
+
+        if (result && result.affectedRows > 0) {
+            // 💡 Backticks use kiye hain taaki dynamic text sahi se dikhe
+            console.log(`Success: ${result.affectedRows} cars are now AVAILABLE again.`);
         } else {
-            if (result.affectedRows > 0) {
-                console.log("Success: ${result.affectedRows} cars are now AVAILABLE again.")
-            } else {
-                console.log("No cars needed status update right now.")
-            }
+            console.log("No cars needed status update right now.");
         }
-    });
+    } catch (err) {
+        console.error("Cron Job Error:", err.message);
+    }
 });
 
 
