@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./login.css";
 import useAuthStores from "../store/authStore";
+import API from "../api";
 
 function Login() {
   const [username, setusername] = useState("");
@@ -11,31 +12,29 @@ function Login() {
   const setToken = useAuthStores((state) => state.setToken);
   const navigate = useNavigate();
 
+
 const postdata = async (e) => {
-  if (e) e.preventDefault(); // Form reload issue se bachne ke liye
+  if (e) e.preventDefault(); 
 
   try {
     let data = { username, password };
+    
+    const res = await API.post('/admin/adminlogin', data);
 
-    const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://easygo-backend-h5xl.onrender.com'}/admin/adminlogin`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: 'include',
-      body: JSON.stringify(data),
-    });
-
-    const data1 = await res.json();
-
-    if (res.ok && data1.token) {
-      setToken(data1.token);
+    if (res.data && res.data.token) {
+      setToken(res.data.token);
       toast.success("Login successful");
       navigate("/admin");
     } else {
-      toast.error(data1.error || data1.message || "Invalid credentials"); // data1.error backend ke hisab se add kiya
+      toast.error(res.data.message || "Invalid credentials");
     }
+    
   } catch (error) {
     console.error(error);
-    toast.error("Server error");
+    
+    const errorMessage = error.response?.data?.error || error.response?.data?.message || "Server error";
+    
+    toast.error(errorMessage);
   }
 };
 
