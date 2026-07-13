@@ -11,21 +11,16 @@ function Login() {
   const setToken = useAuthStores((state) => state.setToken);
   const navigate = useNavigate();
 
-  const postdata = async () => {
-    // if (!username || !password) {
-    //   toast.error("All field are required !!!", {
-    //     position: "top-right",
-    //     autoClose: 2000,
-    //   });
-    //   return;
-    // }
-    try {
+const postdata = async (e) => {
+  if (e) e.preventDefault(); // Form reload issue se bachne ke liye
+
+  try {
     let data = { username, password };
 
-    const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://easygo-backend.onrender.com'}/admin/adminlogin`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://easygo-backend-h5xl.onrender.com'}/admin/adminlogin`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      credentials : 'include',
+      credentials: 'include',
       body: JSON.stringify(data),
     });
 
@@ -36,7 +31,7 @@ function Login() {
       toast.success("Login successful");
       navigate("/admin");
     } else {
-      toast.error(data1.message || "Invalid credentials");
+      toast.error(data1.error || data1.message || "Invalid credentials"); // data1.error backend ke hisab se add kiya
     }
   } catch (error) {
     console.error(error);

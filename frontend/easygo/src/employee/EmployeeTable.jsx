@@ -3,6 +3,7 @@ import { useState, useMemo, useEffect } from "react";
 import ViewEmployeeModal from "./View";
 import EditEmployeeModal from "./Edit";
 import { Eye, Pencil } from "lucide-react";
+import API from "../api";
 
 const PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
 
@@ -22,12 +23,11 @@ export default function EmployeeTable() {
   const [role, setRole] = useState([]);
   const [dept, setDept] = useState([]);
 
-  // ─── Fetch employees from backend ───────────────────────────────────────────
   const fetchEmployees = async () => {
     try {
       setLoading(true);
       setError(null);
-      const result = await axios.get("http://localhost:3006/employees");
+      const result = await API.get("/employees");
 
       setData(result.data);
     } catch (err) {
@@ -46,7 +46,7 @@ export default function EmployeeTable() {
       setLoading(true);
       setError(null);
 
-      const res = await axios.get("http://localhost:3006/get-role");
+      const res = await API.get("/get-role");
       setRole(res.data);
     } catch (err) {
       console.error(err);
@@ -65,7 +65,7 @@ export default function EmployeeTable() {
       setLoading(true);
       setError(null);
 
-      const res = await axios.get("http://localhost:3006/get-dept");
+      const res = await API.get("/get-dept");
       setDept(res.data);
     } catch (err) {
       console.error(err);
@@ -75,7 +75,6 @@ export default function EmployeeTable() {
     }
   };
 
-  // 🔹 useEffect only calls function
   useEffect(() => {
     fetchDept();
   }, []);
@@ -125,7 +124,7 @@ export default function EmployeeTable() {
   async function viewEmployee(eid) {
     if (eid === undefined || eid === null) return;
     try {
-      const res = await axios.get(`http://localhost:3006/get-employee/${eid}`);
+      const res = await API.get(`/get-employee/${eid}`);
       const empData = Array.isArray(res.data) ? res.data[0] : res.data;
       setSelectedEmp(empData);
       setIsModalOpen(true);

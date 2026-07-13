@@ -22,7 +22,7 @@ const addEmployees = (req, res) => {
 const getEmployees = (req,res) =>{
       database.query("SELECT * FROM employee" , (err,result) =>{
             if(err){
-                  return res,status(500).json(err)
+                  return res.status(500).json(err)
             }
             res.send(result)
       })
@@ -31,7 +31,7 @@ const getEmployees = (req,res) =>{
 const getRole = (req,res) =>{
       database.query("SELECT * FROM role" , (err,result) =>{
             if(err){
-                  return res,status(500).json(err)
+                  return res.status(500).json(err)
             }
             res.send(result)
       })
@@ -39,7 +39,7 @@ const getRole = (req,res) =>{
 
 const getDept = (req,res) =>{
       database.query("SELECT * FROM department" , (err,result) =>{
-            if(err){return res,status(500).json(err)}
+            if(err){return res.status(500).json(err)}
             res.send(result)
       })
 };
