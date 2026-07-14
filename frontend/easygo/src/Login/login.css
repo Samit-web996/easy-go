@@ -6,48 +6,55 @@
 
 :root {
     --bg-gradient: linear-gradient(135deg, #6366f1, #9333ea);
-    --box-bg: #ffffff;
+    --box-bg: rgba(255, 255, 255, 0.85); 
+    --box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
     --text-color: #1f2937;
     --input-bg: #f3f4f6;
     --input-border: #d1d5db;
     --input-text: #1f2937;
+    --input-focus-bg: #ffffff;
+    --input-focus-text: #000000;
 }
 
-/* Dark mode configurations */
+/* System Dark mode or custom data-theme config */
 @media (prefers-color-scheme: dark) {
     :root {
         --bg-gradient: linear-gradient(135deg, #1e1b4b, #4338ca);
-        --box-bg: #1f2937;
-        --text-color: #f3f4f6;
+        --box-bg: rgba(0, 0, 0, 0.75); 
+        --box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+        --text-color: #ffffff;
         --input-bg: #374151;
         --input-border: #4b5563;
         --input-text: #ffffff;
+        --input-focus-bg: #1f2937;
+        --input-focus-text: #ffffff;
     }
 }
 
 html, body {
     width: 100%;
-    height: 100%;
-    overflow: hidden; /* Screen se bahar kuch nahi jayega */
+    min-height: 100%;
+    font-family: system-ui, -apple-system, sans-serif;
 }
 
 .page {
     width: 100vw;
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
-    overflow: hidden; /* Image scale hone par bhi scroll nahi aayega */
+    overflow-x: hidden;
+    overflow-y: auto; 
     background-color: #000;
+    padding: 20px; 
 }
 
-/* Background blur layer */
 .page::before {
     content: "";
     position: absolute;
-    /* top: 0;
-    left: 0; */
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), 
@@ -55,42 +62,44 @@ html, body {
     background-size: cover;
     background-position: center;
     filter: blur(4px);
-    /* z-index: -1; */
-    /* Scale edges ko cover karne ke liye zaruri hai */
-    transform: scale(1); 
+    z-index: 0;
+    transform: scale(1.02); 
 }
 
 .box {
-    width: 90%;
-    max-width: 360px;
-    /* Dark decent look */
-    background: rgba(0, 0, 0, 0.7); 
-    padding: 30px;
+    width: 100%;
+    max-width: 380px;
+    background: var(--box-bg); /* Controlled by Theme preferences */
+    padding: 35px 30px;
     border-radius: 16px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--box-shadow);
     z-index: 1;
-    backdrop-filter: blur(5px); /* Form ke piche halka sa glass look */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .title {
     text-align: center;
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 22px;
-    color: #ffffff;
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: var(--text-color);
+    letter-spacing: -0.5px;
 }
 
 .input {
     width: 100%;
-    padding: 12px 15px;
-    margin-bottom: 15px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
     border-radius: 10px;
     border: 1px solid var(--input-border);
     background-color: var(--input-bg);
     color: var(--input-text);
     font-size: 15px;
     outline: none;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease-in-out;
 }
 
 .input::placeholder {
@@ -99,24 +108,40 @@ html, body {
 
 .input:focus {
     border-color: #6366f1;
-    background-color: #ffffff;
-    color: #000;
+    background-color: var(--input-focus-bg);
+    color: var(--input-focus-text);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
 
 .button {
     width: 100%;
-    padding: 12px;
+    padding: 14px;
     background: linear-gradient(135deg, #4f46e5, #7c3aed);
     color: #fff;
     border: none;
-    border-radius: 8px;
-    font-size: 15px;
+    border-radius: 10px;
+    font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
+    margin-top: 5px;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
 }
 
 .button:hover {
-    opacity: 0.9;
+    opacity: 0.95;
     transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+}
+
+.button:active {
+    transform: translateY(1px);
+}
+
+@media (max-height: 500px) {
+    .page {
+        align-items: flex-start;
+        padding-top: 30px;
+        padding-bottom: 30px;
+    }
 }

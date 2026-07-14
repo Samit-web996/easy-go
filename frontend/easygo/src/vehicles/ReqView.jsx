@@ -6,10 +6,9 @@ export default function RequestView({ isOpen, vehicleInfo, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-md bg-black/60 transition-all duration-300">
-      {/* Modal Container: Height and padding optimized */}
       <div className="relative w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-2xl shadow-2xl bg-white text-gray-800 dark:bg-[#0d1117] dark:text-gray-200 border border-gray-100 dark:border-gray-800/80 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700">
         
-        {/* Header (Properly Padded) */}
+        {/* Header */}
         <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-5 bg-gray-50 dark:bg-[#161b22] border-b border-gray-100 dark:border-gray-800">
           <h2 className="text-xl font-bold tracking-wide bg-gradient-to-r from-blue-600 to-indigo-500 bg-clip-text text-transparent dark:from-blue-400 dark:to-indigo-300">
             Vehicle Specification Details
@@ -24,7 +23,6 @@ export default function RequestView({ isOpen, vehicleInfo, onClose }) {
           </button>
         </div>
 
-        {/* Main Body Content Wrapper with generous spacing */}
         <div className="p-6 space-y-6">
           
           {vehicleInfo.image && (
@@ -50,7 +48,7 @@ export default function RequestView({ isOpen, vehicleInfo, onClose }) {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             
-            {/* Host & Ownership Box (Padded nicely) */}
+            {/* Host & Ownership Box */}
             <div className="p-5 rounded-xl bg-gray-50/50 dark:bg-[#161b22]/40 border border-gray-100 dark:border-gray-800/60 sm:col-span-2 space-y-3">
               <h3 className="text-xs font-bold tracking-wider uppercase text-blue-600 dark:text-blue-400">Host & Ownership</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm pt-1">
@@ -104,7 +102,7 @@ export default function RequestView({ isOpen, vehicleInfo, onClose }) {
           </div>
         </div>
 
-        {/* Footer (Padded properly with distinct spacing) */}
+        {/* Footer */}
         <div className="px-6 py-4 bg-gray-50 dark:bg-[#161b22] border-t border-gray-100 dark:border-gray-800 flex justify-end">
           <button
             onClick={onClose}

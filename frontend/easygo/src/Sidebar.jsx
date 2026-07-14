@@ -1,17 +1,25 @@
-import { Menu, X, LayoutDashboard, Users, BarChart3, LogOut, Car,User   } from "lucide-react";
+import {
+  Menu,
+  X,
+  LayoutDashboard,
+  Users,
+  BarChart3,
+  LogOut,
+  Car,
+  User,
+} from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import useAuthStores from "./store/authStore";
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
+  const logout = useAuthStores((state) => state.logout);
+  const navigate = useNavigate();
 
-  const logout = useAuthStores((state)=> state.logout);
-const navigate = useNavigate();
+  const handlelogout = () => {
+    logout();
+    navigate("/");
+  };
 
-const handlelogout = ()=>{
-  logout()
-  navigate('/')
-}
-  
   return (
     <>
       {/* Mobile Overlay */}
@@ -66,7 +74,9 @@ const handlelogout = ()=>{
                   : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-black dark:hover:text-white"
               }`
             }
-          ><br /><br />
+          >
+            <br />
+            <br />
             <LayoutDashboard size={20} />
             <span className="font-medium">Dashboard</span>
           </NavLink>
@@ -83,7 +93,9 @@ const handlelogout = ()=>{
                   : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-black dark:hover:text-white"
               }`
             }
-          ><br /><br />
+          >
+            <br />
+            <br />
             <Users size={20} />
             <span className="font-medium">Employees</span>
           </NavLink>
@@ -100,7 +112,9 @@ const handlelogout = ()=>{
                   : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-black dark:hover:text-white"
               }`
             }
-          ><br /><br />
+          >
+            <br />
+            <br />
             <Car size={20} />
             <span className="font-medium">Vehicles</span>
           </NavLink>
@@ -117,7 +131,9 @@ const handlelogout = ()=>{
                   : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-black dark:hover:text-white"
               }`
             }
-          ><br /><br />
+          >
+            <br />
+            <br />
             <BarChart3 size={20} />
             <span className="font-medium">Financial</span>
           </NavLink>
@@ -133,8 +149,10 @@ const handlelogout = ()=>{
                   : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-black dark:hover:text-white"
               }`
             }
-          ><br /><br />
-            <User  size={20} />
+          >
+            <br />
+            <br />
+            <User size={20} />
             <span className="font-medium">Client</span>
           </NavLink>
         </nav>
@@ -142,7 +160,10 @@ const handlelogout = ()=>{
         {/* Logout */}
         <div className="p-4 border-t border-gray-200 dark:border-zinc-800 mt-auto">
           <NavLink to="/">
-            <button onClick={handlelogout} className="flex items-center gap-3 h-10 w-full p-3 text-gray-600 dark:text-gray-400 rounded-xl hover:bg-red-500 hover:text-white transition-all duration-200 group">
+            <button
+              onClick={handlelogout}
+              className="flex items-center gap-3 h-10 w-full p-3 text-gray-600 dark:text-gray-400 rounded-xl hover:bg-red-500 hover:text-white transition-all duration-200 group"
+            >
               <LogOut
                 size={20}
                 className="group-hover:scale-110 transition-transform"
@@ -154,4 +175,4 @@ const handlelogout = ()=>{
       </aside>
     </>
   );
-} 
+}

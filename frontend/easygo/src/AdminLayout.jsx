@@ -12,10 +12,8 @@ function AdminLayout() {
 
   return (
     <div className="flex bg-zinc-950 h-screen overflow-hidden">
-      
       <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
-      
       <div className="flex-1 flex flex-col h-full overflow-hidden transition-all duration-300">
         <AdminNavbar toggleSidebar={toggleSidebar} />
 

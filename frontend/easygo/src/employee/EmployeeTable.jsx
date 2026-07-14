@@ -150,29 +150,26 @@ export default function EmployeeTable() {
     { label: "Name", key: "name" },
     { label: "Email", key: "email" },
     { label: "Mobile", key: "mobile" },
-    // { label: "Salary", key: "salary" },
-    // { label: "DOJ", key: "joining_Date" },
-    // { label: "Role", key: "role" },
     { label: "", key: null },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#0d1117] transition-colors duration-300 p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#0d1117] transition-colors duration-300 p-4 sm:p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <span className="text-sm text-gray-500 dark:text-gray-400">
-            {filtered.length} records
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+            {filtered.length} records found
           </span>
         </div>
 
-        {/* Search + Page size */}
-        <div className="flex items-center justify-between mb-4 gap-4">
+        {/* Search + Page size controls adjustments */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between mb-6 gap-4">
           <div
-            className="flex items-center gap-2 w-64 px-3 py-2 rounded-lg
-            border border-gray-300 dark:border-white/10
+            className="flex items-center gap-2 w-full sm:w-72 px-3 py-2.5 sm:py-2 rounded-xl
+            border border-gray-200 dark:border-white/10
             bg-white dark:bg-[#0d1117]
-            focus-within:ring-2 focus-within:ring-blue-500 transition-all"
+            focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500 transition-all shadow-sm"
           >
             <svg
               className="w-4 h-4 text-gray-400 shrink-0"
@@ -190,7 +187,7 @@ export default function EmployeeTable() {
                 setSearch(e.target.value);
                 setPage(0);
               }}
-              placeholder="Search..."
+              placeholder="Search data records..."
               className="bg-transparent outline-none text-sm w-full text-gray-900 dark:text-white placeholder-gray-400"
             />
           </div>
@@ -201,33 +198,32 @@ export default function EmployeeTable() {
               setPageSize(Number(e.target.value));
               setPage(0);
             }}
-            className="px-3 py-2 rounded-lg text-sm border
-              border-gray-300 dark:border-white/10
+            className="px-3 py-2.5 sm:py-2 rounded-xl text-sm border
+              border-gray-200 dark:border-white/10
               bg-white dark:bg-[#0d1117]
               text-gray-900 dark:text-white
-              outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+              outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 cursor-pointer shadow-sm text-center sm:text-left"
           >
             {PAGE_SIZE_OPTIONS.map((s) => (
               <option key={s} value={s}>
-                Show {s}
+                Show {s} entries
               </option>
             ))}
           </select>
         </div>
 
-        {/* Table */}
-        <div className="rounded-xl overflow-hidden border border-gray-200 dark:border-white/10">
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-sm">
+        <div className="rounded-xl bg-white dark:bg-[#0d1117] overflow-hidden border border-gray-200 dark:border-white/10 shadow-sm w-full">
+          <div className="w-full overflow-x-auto">
+            <table className="w-full border-collapse text-sm min-w-[700px]">
               <thead>
-                <tr className="bg-gray-100 dark:bg-[#161b27]">
+                <tr className="bg-gray-50 dark:bg-[#161b27] border-b border-gray-200 dark:border-white/10">
                   {COLUMNS.map(({ label, key }) => (
                     <th
-                      key={label}
+                      key={label || "actions"}
                       onClick={() => key && handleSort(key)}
-                      className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider
+                      className={`px-4 py-3.5 text-left text-xs font-bold uppercase tracking-wider
                         text-gray-500 dark:text-gray-400
-                        ${key ? "cursor-pointer hover:text-gray-800 dark:hover:text-white select-none" : ""}
+                        ${key ? "cursor-pointer hover:text-gray-900 dark:hover:text-white select-none" : ""}
                         transition-colors`}
                     >
                       {label}
@@ -237,39 +233,48 @@ export default function EmployeeTable() {
                 </tr>
               </thead>
 
-              <tbody>
+              <tbody className="text-gray-700 dark:text-gray-300">
                 {/* Loading state */}
                 {loading && (
                   <tr>
                     <td
-                      colSpan={8}
+                      colSpan={5}
                       className="px-6 py-12 text-center text-gray-400"
                     >
                       <div className="flex items-center justify-center gap-2">
                         <svg
-                          className="animate-spin w-4 h-4"
+                          className="animate-spin w-4 h-4 text-blue-500"
                           fill="none"
                           viewBox="0 0 24 24"
                         >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          />
                           <path
                             className="opacity-75"
                             fill="currentColor"
-                            d="M4 12a8 8 0 018-8v8z"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                           />
                         </svg>
-                        Loading employees...
+                        Loading operational matrix...
                       </div>
                     </td>
                   </tr>
                 )}
+
                 {/* Empty state */}
                 {!loading && !error && pageData.length === 0 && (
                   <tr>
                     <td
-                      colSpan={8}
-                      className="px-6 py-12 text-center text-gray-500"
+                      colSpan={5}
+                      className="px-6 py-12 text-center text-gray-400 font-medium"
                     >
-                      No employees found.
+                      No records matched the criteria.
                     </td>
                   </tr>
                 )}
@@ -280,113 +285,110 @@ export default function EmployeeTable() {
                   pageData.map((emp, i) => (
                     <tr
                       key={emp.eid}
-                      className={`border-t border-gray-100 dark:border-white/5
-                        hover:bg-gray-100 dark:hover:bg-[#1a2333] transition-colors
-                        ${i % 2 === 0 ? "bg-white dark:bg-[#0d1117]" : "bg-gray-50 dark:bg-[#0f1520]"}`}
+                      className={`border-b border-gray-100 dark:border-white/5
+                        hover:bg-gray-50 dark:hover:bg-[#1a2333]/40 transition-colors
+                        ${i % 2 === 0 ? "bg-white dark:bg-[#0d1117]" : "bg-gray-50/40 dark:bg-[#0f1520]/40"}`}
                     >
-                      <td className="px-4 py-3">
-                        <span className="bg-zinc-200 dark:bg-zinc-800 px-2 py-1 rounded text-xs font-mono text-gray-700 dark:text-gray-300">
+                      <td className="px-4 py-3.5">
+                        <span className="bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 px-2.5 py-1 rounded-lg text-xs font-mono font-bold text-gray-700 dark:text-gray-300 shadow-sm">
                           #{String(emp.eid).padStart(3, "0")}
                         </span>
                       </td>
-                      <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
+                      <td className="px-4 py-3.5 font-semibold text-gray-900 dark:text-white">
                         {emp.name}
                       </td>
-                      <td className="px-4 py-3 text-gray-600 dark:text-gray-300">
+                      <td className="px-4 py-3.5 font-medium text-gray-600 dark:text-gray-300">
                         {emp.email}
                       </td>
-                      <td className="px-4 py-3 text-gray-600 dark:text-gray-300">
+                      <td className="px-4 py-3.5 font-medium text-gray-600 dark:text-gray-300">
                         {emp.mobile}
                       </td>
-                      <td className="px-4 py-3 flex gap-3">
-                        <div className="flex items-center gap-3">
-                          {" "}
-                          {/* Wrapper for centering and spacing */}
+                      <td className="px-4 py-3.5">
+                        <div className="flex items-center gap-2.5">
                           {/* View Button */}
                           <button
                             onClick={() => viewEmployee(emp.eid)}
-                            className="inline-flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-300 
-               bg-blue-50 hover:bg-blue-100 text-blue-600 
-               dark:bg-blue-900/20 dark:hover:bg-blue-900/40 dark:text-blue-400
-               border border-blue-200 dark:border-blue-800 shadow-sm hover:scale-105 active:scale-95"
+                            className="inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-200 
+                              bg-blue-50 hover:bg-blue-100 text-blue-600 
+                              dark:bg-blue-900/20 dark:hover:bg-blue-900/40 dark:text-blue-400
+                              border border-blue-200/60 dark:border-blue-800/60 shadow-sm active:scale-95 cursor-pointer"
                             title="View Details"
                           >
-                            <Eye size={18} />
+                            <Eye size={16} />
                           </button>
                           {/* Edit Button */}
                           <button
                             onClick={() => handleEditClick(emp)}
-                            className="inline-flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-300 
-               bg-amber-50 hover:bg-amber-100 text-amber-600 
-               dark:bg-amber-900/20 dark:hover:bg-amber-900/40 dark:text-amber-400
-               border border-amber-200 dark:border-amber-800 shadow-sm hover:scale-105 active:scale-95"
+                            className="inline-flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-200 
+                              bg-amber-50 hover:bg-amber-100 text-amber-600 
+                              dark:bg-amber-900/20 dark:hover:bg-amber-900/40 dark:text-amber-400
+                              border border-amber-200/60 dark:border-amber-800/60 shadow-sm active:scale-95 cursor-pointer"
                             title="Edit Employee"
                           >
-                            <Pencil size={18} />
+                            <Pencil size={16} />
                           </button>
                         </div>
-
-                        <EditEmployeeModal
-                          isOpen={isEditModalOpen}
-                          editEmp={editEmp}
-                          setEditEmp={setEditEmp}
-                          onClose={() => setIsEditModalOpen(false)}
-                          roles={role}
-                          depts={dept}
-                          onUpdateSuccess={fetchEmployees}
-                        />
                       </td>
                     </tr>
                   ))}
               </tbody>
             </table>
-
-            {/* Modal */}
-            <ViewEmployeeModal
-              isOpen={isModalOpen}
-              employee={selectedEmp}
-              onClose={() => setIsModalOpen(false)}
-            />
           </div>
         </div>
 
-        {/* Pagination */}
-        <div className="mt-4 flex items-center justify-between text-sm">
-          <span className="text-gray-500 dark:text-gray-400">
-            Page{" "}
-            <span className="text-gray-800 dark:text-white font-medium">
+        {/* Pagination controls */}
+        <div className="mt-5 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm px-1">
+          <span className="text-gray-500 dark:text-gray-400 font-medium order-2 sm:order-1">
+            Showing Page{" "}
+            <span className="text-gray-800 dark:text-white font-bold">
               {currentPage + 1}
             </span>{" "}
             of{" "}
-            <span className="text-gray-800 dark:text-white font-medium">
+            <span className="text-gray-800 dark:text-white font-bold">
               {totalPages}
             </span>
           </span>
-          <div className="flex gap-2">
+          <div className="flex gap-2 w-full sm:w-auto order-1 sm:order-2">
             <button
               onClick={() => setPage((p) => Math.max(0, p - 1))}
               disabled={currentPage === 0}
-              className="px-4 py-1.5 rounded-lg border text-sm transition-all
+              className="flex-1 sm:flex-initial px-4 py-2 rounded-xl border text-sm transition-all font-semibold
                 border-gray-300 dark:border-white/10
-                text-gray-700 dark:text-gray-300
+                text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0d1117]
                 hover:bg-gray-100 dark:hover:bg-white/5
-                disabled:opacity-30 disabled:cursor-not-allowed"
+                disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shadow-sm"
             >
               Previous
             </button>
             <button
               onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
               disabled={currentPage >= totalPages - 1}
-              className="px-4 py-1.5 rounded-lg border text-sm transition-all
+              className="flex-1 sm:flex-initial px-4 py-2 rounded-xl border text-sm transition-all font-semibold
                 border-gray-300 dark:border-white/10
-                text-gray-700 dark:text-gray-300
+                text-gray-700 dark:text-gray-300 bg-white dark:bg-[#0d1117]
                 hover:bg-gray-100 dark:hover:bg-white/5
-                disabled:opacity-30 disabled:cursor-not-allowed"
+                disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shadow-sm"
             >
               Next
             </button>
           </div>
         </div>
+
+        <EditEmployeeModal
+          isOpen={isEditModalOpen}
+          editEmp={editEmp}
+          setEditEmp={setEditEmp}
+          onClose={() => setIsEditModalOpen(false)}
+          roles={role}
+          depts={dept}
+          onUpdateSuccess={fetchEmployees}
+        />
+
+        <ViewEmployeeModal
+          isOpen={isModalOpen}
+          employee={selectedEmp}
+          onClose={() => setIsModalOpen(false)}
+        />
       </div>
     </div>
   );

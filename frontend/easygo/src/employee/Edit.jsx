@@ -22,8 +22,7 @@ export default function EditEmployeeModal({
 
   const handleUpdate = async () => {
     try {
-      const res = await API.patch(
-        `/update-emp/${editEmp.eid}`, editEmp);
+      const res = await API.patch(`/update-emp/${editEmp.eid}`, editEmp);
       toast.success("Employee profile updated successfully!", {
         position: "top-right",
         autoClose: 2000,
@@ -38,242 +37,187 @@ export default function EditEmployeeModal({
   };
 
   return (
-    <div 
-    className="fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300"
-    style={{ 
-      backgroundColor: "rgba(10, 15, 30, 0.65)", // Black ke bajay dashboard se matching translucent dark slate overlay
-      backdropFilter: "blur(12px)", // Solid layer ko todne ke liye smooth glass blur effect
-    }}
-  >
-    <div 
-      className="w-full flex flex-col border border-gray-800"
-      style={{ 
-        backgroundColor: "#0d1117",
-        maxWidth: "520px",
-        borderRadius: "16px",
-        boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.7)"
-      }}
-    >
-        
-        <div 
-          className="flex items-center justify-between"
-          style={{ 
-            padding: "20px 24px", 
-            borderBottom: "1px solid #1f2937",
-            backgroundColor: "#0f141c",
-            borderRadius: "16px 16px 0 0"
-          }}
+    <div className="fixed inset-0 z-50 backdrop-opacity-0 flex items-center justify-center p-4 transition-all duration-300">
+      <div
+        className="absolute inset-0 transition-opacity bg-white/10 dark:bg-black/20"
+        style={{
+          backdropFilter: "blur(200px)",
+          WebkitBackdropFilter: "blur(200px)",
+          zIndex: -100,
+        }}
+        onClick={onClose}
+      />
+
+      <div className="w-full flex flex-col bg-white dark:bg-zinc-900 border border-gray-200/80 dark:border-zinc-800 max-w-[540px] rounded-2xl shadow-[0_0_50px_0_rgba(0,0,0,0.15)] dark:shadow-[0_0_60px_0_rgba(0,0,0,0.6)] overflow-hidden transition-all duration-200 relative">
+        <div
+          className="flex items-center justify-between border-b border-gray-100 dark:border-zinc-800 bg-gray-50/70 dark:bg-zinc-900/50"
+          style={{ padding: "24px 28px" }}
         >
           <div>
-            <h2 className="text-base font-bold text-white tracking-wide m-0">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white tracking-wide m-0">
               Update Employee Settings
             </h2>
-            <p className="text-gray-500 m-0 mt-1" style={{ fontSize: "11px" }}>
+            <p className="text-gray-500 dark:text-gray-400 m-0 mt-1.5 text-xs">
               Modify profile configurations and operational assignments.
             </p>
           </div>
-          <button 
+          <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white"
-            style={{ background: "none", border: "none", cursor: "pointer", fontSize: "16px" }}
+            type="button"
+            className="text-gray-400 hover:text-gray-700 dark:hover:text-white text-lg bg-transparent border-none cursor-pointer p-1 transition-colors"
           >
             ✕
           </button>
         </div>
 
-        <div 
-          className="space-y-4 overflow-y-auto"
-          style={{ padding: "24px", maxHeight: "60vh" }}
+        <div
+          className="overflow-y-auto text-gray-900 dark:text-white flex flex-col gap-5"
+          style={{ padding: "28px", maxHeight: "65vh" }}
         >
-          
-          {/* Dual Input Grid Framework Row */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Mobile Registry</label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div className="flex flex-col gap-2">
+              <label className="text-[11px] font-bold text-gray-400 dark:text-gray-400 uppercase tracking-wider">
+                Mobile Registry
+              </label>
               <input
                 type="text"
                 name="mobile"
                 value={editEmp.mobile || ""}
                 onChange={handleChange}
-                className="w-full border border-gray-800"
-                style={{
-                  backgroundColor: "#161b27",
-                  color: "#ffffff",
-                  borderRadius: "10px",
-                  padding: "10px 14px",
-                  fontSize: "14px",
-                  outline: "none"
-                }}
+                className="w-full border border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-800/60 text-gray-900 dark:text-white rounded-xl focus:border-blue-500 focus:bg-white dark:focus:bg-zinc-800 outline-none transition-all"
+                style={{ padding: "12px 16px", fontSize: "14px" }}
                 placeholder="Enter mobile no."
               />
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Salary Tier (INR)</label>
+            <div className="flex flex-col gap-2">
+              <label className="text-[11px] font-bold text-gray-400 dark:text-gray-400 uppercase tracking-wider">
+                Salary Tier (INR)
+              </label>
               <input
                 type="text"
                 name="salary"
                 value={editEmp.salary || ""}
                 onChange={handleChange}
-                className="w-full border border-gray-800"
-                style={{
-                  backgroundColor: "#161b27",
-                  color: "#ffffff",
-                  borderRadius: "10px",
-                  padding: "10px 14px",
-                  fontSize: "14px",
-                  outline: "none"
-                }}
+                className="w-full border border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-800/60 text-gray-900 dark:text-white rounded-xl focus:border-blue-500 focus:bg-white dark:focus:bg-zinc-800 outline-none transition-all"
+                style={{ padding: "12px 16px", fontSize: "14px" }}
                 placeholder="Enter monthly payout"
               />
             </div>
           </div>
 
-          {/* Email Form Field Block */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Corporate Email Identifier</label>
+          <div className="flex flex-col gap-2">
+            <label className="text-[11px] font-bold text-gray-400 dark:text-gray-400 uppercase tracking-wider">
+              Corporate Email Identifier
+            </label>
             <input
               type="email"
               name="email"
               value={editEmp.email || ""}
               onChange={handleChange}
-              className="w-full border border-gray-800"
-              style={{
-                backgroundColor: "#161b27",
-                color: "#ffffff",
-                borderRadius: "10px",
-                padding: "10px 14px",
-                fontSize: "14px",
-                outline: "none"
-              }}
+              className="w-full border border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-800/60 text-gray-900 dark:text-white rounded-xl focus:border-blue-500 focus:bg-white dark:focus:bg-zinc-800 outline-none transition-all"
+              style={{ padding: "12px 16px", fontSize: "14px" }}
               placeholder="name@company.com"
             />
           </div>
 
-          {/* Address Form Field Block */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Residential Location Address</label>
+          <div className="flex flex-col gap-2">
+            <label className="text-[11px] font-bold text-gray-400 dark:text-gray-400 uppercase tracking-wider">
+              Residential Location Address
+            </label>
             <input
               type="text"
               name="address"
               value={editEmp.address || ""}
               onChange={handleChange}
-              className="w-full border border-gray-800"
-              style={{
-                backgroundColor: "#161b27",
-                color: "#ffffff",
-                borderRadius: "10px",
-                padding: "10px 14px",
-                fontSize: "14px",
-                outline: "none"
-              }}
+              className="w-full border border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-800/60 text-gray-900 dark:text-white rounded-xl focus:border-blue-500 focus:bg-white dark:focus:bg-zinc-800 outline-none transition-all"
+              style={{ padding: "12px 16px", fontSize: "14px" }}
               placeholder="Street location, City block"
             />
           </div>
 
-          {/* Dropdowns Configuration Layout Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Department Unit</label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div className="flex flex-col gap-2">
+              <label className="text-[11px] font-bold text-gray-400 dark:text-gray-400 uppercase tracking-wider">
+                Department Unit
+              </label>
               <select
                 name="deptid"
                 value={editEmp.deptid || ""}
                 onChange={handleChange}
-                className="w-full border border-gray-800"
-                style={{
-                  backgroundColor: "#161b27",
-                  color: "#ffffff",
-                  borderRadius: "10px",
-                  padding: "10px 14px",
-                  fontSize: "14px",
-                  outline: "none",
-                  cursor: "pointer"
-                }}
+                className="w-full border border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-800/60 text-gray-900 dark:text-white rounded-xl focus:border-blue-500 outline-none cursor-pointer transition-all"
+                style={{ padding: "12px 16px", fontSize: "14px" }}
               >
-                <option value="" style={{ backgroundColor: "#0d1117" }}>Select Dept</option>
+                <option
+                  value=""
+                  className="bg-white dark:bg-zinc-900 text-gray-900 dark:text-white"
+                >
+                  Select Dept
+                </option>
                 {depts.map((d) => (
-                  <option key={d.deptid} value={d.deptid} style={{ backgroundColor: "#0d1117" }}>
+                  <option
+                    key={d.deptid}
+                    value={d.deptid}
+                    className="bg-white dark:bg-zinc-900 text-gray-900 dark:text-white"
+                  >
                     {d.deptname}
                   </option>
                 ))}
               </select>
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Organizational Role</label>
+            <div className="flex flex-col gap-2">
+              <label className="text-[11px] font-bold text-gray-400 dark:text-gray-400 uppercase tracking-wider">
+                Organizational Role
+              </label>
               <select
                 name="roleid"
                 value={editEmp.roleid || ""}
                 onChange={handleChange}
-                className="w-full border border-gray-800"
-                style={{
-                  backgroundColor: "#161b27",
-                  color: "#ffffff",
-                  borderRadius: "10px",
-                  padding: "10px 14px",
-                  fontSize: "14px",
-                  outline: "none",
-                  cursor: "pointer"
-                }}
+                className="w-full border border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-800/60 text-gray-900 dark:text-white rounded-xl focus:border-blue-500 outline-none cursor-pointer transition-all"
+                style={{ padding: "12px 16px", fontSize: "14px" }}
               >
-                <option value="" style={{ backgroundColor: "#0d1117" }}>Select Role</option>
+                <option
+                  value=""
+                  className="bg-white dark:bg-zinc-900 text-gray-900 dark:text-white"
+                >
+                  Select Role
+                </option>
                 {roles.map((r) => (
-                  <option key={r.roleid} value={r.roleid} style={{ backgroundColor: "#0d1117" }}>
+                  <option
+                    key={r.roleid}
+                    value={r.roleid}
+                    className="bg-white dark:bg-zinc-900 text-gray-900 dark:text-white"
+                  >
                     {r.rolename}
                   </option>
                 ))}
               </select>
             </div>
           </div>
-
         </div>
 
-        {/* Footer Actions Operational Controls Area */}
-        <div 
-          className="flex items-center justify-end gap-3"
-          style={{ 
-            padding: "20px 24px", 
-            borderTop: "1px solid #1f2937",
-            backgroundColor: "#0f141c",
-            borderRadius: "0 0 16px 16px"
-          }}
+        <div
+          className="flex items-center justify-end gap-4 border-t border-gray-100 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-900/50"
+          style={{ padding: "20px 28px" }}
         >
           <button
             onClick={onClose}
-            className="text-gray-300 hover:text-white transition-all duration-150"
-            style={{
-              padding: "10px 20px",
-              backgroundColor: "#1f2937",
-              border: "1px solid #374151",
-              borderRadius: "10px",
-              fontSize: "12px",
-              fontWeight: "bold",
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-              cursor: "pointer"
-            }}
+            type="button"
+            className="bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-xl font-bold uppercase tracking-wider transition-all cursor-pointer"
+            style={{ padding: "12px 24px", fontSize: "12px" }}
           >
             Cancel
           </button>
           <button
             onClick={handleUpdate}
-            className="text-white transition-all duration-150"
-            style={{
-              padding: "10px 22px",
-              backgroundColor: "#2563eb",
-              border: "none",
-              borderRadius: "10px",
-              fontSize: "12px",
-              fontWeight: "bold",
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-              cursor: "pointer"
-            }}
+            type="button"
+            className="bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white font-bold uppercase tracking-wider shadow-md hover:shadow-lg rounded-xl border-none transition-all cursor-pointer"
+            style={{ padding: "12px 26px", fontSize: "12px" }}
           >
             Apply Changes
           </button>
         </div>
-
       </div>
     </div>
   );
