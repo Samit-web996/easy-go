@@ -1,50 +1,48 @@
 const Razorpay = require('razorpay');
 const dotenv = require('dotenv');
 const database = require('../../../Model/dbConnect');
-dotenv.config()
+dotenv.config();
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET
 });
 
-const options = async (req,res) => {
-      const { amount, uid, car_id,start_date, end_date } = req.body;
+const options = async (req, res) => {
+  const { amount, uid, car_id, start_date, end_date } = req.body;
 
-  const options = {
-    amount: amount * 100,
+  const orderOptions = {
+    amount: amount * 100, 
     currency: "INR",
     receipt: `receipt_${Date.now()}`,
   };
 
   try {
-    const order = await razorpay.orders.create(options);
-    console.log(order, "userdata");
+    const order = await razorpay.orders.create(orderOptions);
+    console.log("Razorpay Order Created:", order.id);
 
     const bookingQuery = `INSERT INTO bookings 
-        (user_id, car_id, order_id, total_amount,start_date, end_date, payment_status) 
-        VALUES (?,?,?,?,?,?, 'PENDING')`;
+        (user_id, car_id, order_id, total_amount, start_date, end_date, payment_status) 
+        VALUES (?, ?, ?, ?, ?, ?, 'PENDING')`;
 
-    database.query(bookingQuery, [uid, car_id, order.id, amount,start_date, end_date], (err) => {
+    database.query(bookingQuery, [uid, car_id, order.id, amount, start_date, end_date], (err) => {
       if (err) {
         console.error("Database Booking Error:", err.message);
         return res.status(500).json({ success: false, message: "The booking was not saved in the app." });
       }
 
-
-    res.json({
-      success: true,
-      order_id: order.id,
-      amount: order.amount,
-      key_id: process.env.RAZORPAY_KEY_ID
-    })
+      return res.status(200).json({
+        success: true,
+        order_id: order.id,
+        amount: order.amount,
+        key_id: process.env.RAZORPAY_KEY_ID
+      });
     });
+
   } catch (error) {
-  
     console.error("Razorpay Error:", error);
-    res.status(500).json({ success: false, message: "Order not completed for server" });
+    return res.status(500).json({ success: false, message: "Order not completed for server" });
   }
 };
-
 
 module.exports = options;
