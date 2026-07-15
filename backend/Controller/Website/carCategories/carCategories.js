@@ -1,18 +1,20 @@
-const database = require("../../../Model/dbConnect");
+const database = require("../../../Model/dbConnect")
 
-const getCarCategories = async (req, res) => {
-  const sql = `SELECT v.* , l.city_name FROM registered_vehicle v JOIN city_list l ON v.loc_id = l.loc_id`;
-  
-  try {
-    const [result] = await database.query(sql);
+const getCarCategories = (req, res) => {
+  const sql = "SELECT * FROM registered_vehicle"; 
+
+  database.query(sql, (err, result) => {
+    if (err) {
+      console.error("Error fetching categories from DB:", err);
+      return res.status(500).json({ 
+        success: false, 
+        error: "Failed to fetch categories", 
+        details: err.message 
+      });
+    }
     
-    res.json(result);
-  } catch (err) {
-    console.error("Error fetching CarCategories information:", err);
-    res
-      .status(500)
-      .json({ error: "Failed to fetch CarCategories information" });
-  }
+    return res.status(200).json(result); 
+  });
 };
 
 const getCarInfo = (req, res) => {
