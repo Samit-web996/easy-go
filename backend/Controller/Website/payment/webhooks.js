@@ -25,7 +25,9 @@ const handleRazorpayWebhook = (req, res) => {
 
   const orderId = payment.order_id || (payload.order ? payload.order.entity.id : null);
   const paymentId = payment.id;
-  const email = payment.email;
+  
+  // Dynamic Email fallback (Agar payload se direct mail pass na ho)
+  const email = payment.email || (req.body.payload && req.body.payload.order ? req.body.payload.order.entity.email : null);
   const contact = payment.contact;
   const amount = payment.amount / 100;
   const failureReason = payment.error_description || null;
@@ -38,7 +40,7 @@ const handleRazorpayWebhook = (req, res) => {
     return res.status(200).json({ status: "ignored" });
   }
 
-  // Modified Query: explicitly selecting user_id from booking as fallback
+  // Optimized Query: dynamically checking current orders mapping
   const dynamicCarQuery = `
         SELECT rv.carid, rv.carName, rv.brand, b.user_id 
         FROM bookings b
@@ -54,13 +56,13 @@ const handleRazorpayWebhook = (req, res) => {
     const carData = results[0] || {};
     const carName = carData.carName ? `${carData.brand} ${carData.carName}` : "Your Rental Car";
     const carId = carData.carid || null;
-    
-    // Fallback: Agar user_id direct query se check na ho, toh crash na ho null value set ho jaye
     const uid = carData.user_id || null; 
 
-    // Email logic inside standard promise tracking
+    // Safe Email Trigger Mechanism
     if (status === "PAID" && email) {
+      console.log(`Triggering Email flow for address: ${email}`);
       const bookingDate = new Date().toLocaleDateString();
+      
       sendEmail({
         email: email,
         subject: `Booking Confirmed: Your trip with ${carName} is ready! 🚗`,
@@ -102,15 +104,17 @@ const handleRazorpayWebhook = (req, res) => {
                 © 2026 EasyGo Rentals. All rights reserved.<br>Bhopal, Madhya Pradesh, India.
             </div>
         </div>`
-      }).then(() => console.log("✅ Confirmation Email Sent."))
-        .catch(mailErr => console.error("Nodemailer Error:", mailErr.message));
+      }).then(() => console.log("✅ Confirmation Email Sent successfully."))
+        .catch(mailErr => console.error("❌ Nodemailer Processing Error:", mailErr.message));
+    } else {
+      console.log("⚠️ Email skipped: Status is not PAID or Email is missing/undefined from payload.");
     }
 
     const logQuery = `INSERT INTO payment_logs (order_id, uid, payment_id, user_email, user_contact, amount, status, failure_reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
     const updateBookingQuery = "UPDATE bookings SET payment_status = ? WHERE order_id = ?";
     const updateVehicleQuery = "UPDATE registered_vehicle SET status = 'UNAVAILABLE' WHERE carid = ?";
 
-    // Safe sequential transaction updates
+    // Safe transaction updates
     database.query(logQuery, [orderId, uid, paymentId, email, contact, amount, status, failureReason], (logErr) => {
       if (logErr) console.error("Log Error Details:", logErr.message);
 
