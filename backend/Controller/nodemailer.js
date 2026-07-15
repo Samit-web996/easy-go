@@ -3,11 +3,10 @@ const nodemailer = require('nodemailer');
 const sendEmail = async (options) => {
       const transporter = nodemailer.createTransport({
             host: 'smtp.gmail.com', 
-            port: 465,             
-            secure: true,
-            // 👇 Yeh lines add karni hain IPv4 force karne ke liye
-            connectionTimeout: 10000, // 10 seconds timeout
-            family: 4,                // Force IPv4 (IPv6 block bypass karne ke liye)
+            port: 587,             
+            secure: false,
+            connectionTimeout: 10000,
+            family: 4,                
             auth : {
                   user : process.env.EMAIL_USER,
                   pass : process.env.EMAIL_PASS,

@@ -26,7 +26,6 @@ const handleRazorpayWebhook = (req, res) => {
   const orderId = payment.order_id || (payload.order ? payload.order.entity.id : null);
   const paymentId = payment.id;
   
-  // Dynamic Email fallback (Agar payload se direct mail pass na ho)
   const email = payment.email || (req.body.payload && req.body.payload.order ? req.body.payload.order.entity.email : null);
   const contact = payment.contact;
   const amount = payment.amount / 100;
@@ -40,7 +39,6 @@ const handleRazorpayWebhook = (req, res) => {
     return res.status(200).json({ status: "ignored" });
   }
 
-  // Optimized Query: dynamically checking current orders mapping
   const dynamicCarQuery = `
         SELECT rv.carid, rv.carName, rv.brand, b.user_id 
         FROM bookings b
@@ -58,7 +56,6 @@ const handleRazorpayWebhook = (req, res) => {
     const carId = carData.carid || null;
     const uid = carData.user_id || null; 
 
-    // Safe Email Trigger Mechanism
     if (status === "PAID" && email) {
       console.log(`Triggering Email flow for address: ${email}`);
       const bookingDate = new Date().toLocaleDateString();
