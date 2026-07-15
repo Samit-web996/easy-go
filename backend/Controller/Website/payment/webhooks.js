@@ -38,10 +38,11 @@ const handleRazorpayWebhook = (req, res) => {
     return res.status(200).json({ status: "ignored" });
   }
 
+  // Modified Query: explicitly selecting user_id from booking as fallback
   const dynamicCarQuery = `
         SELECT rv.carid, rv.carName, rv.brand, b.user_id 
-        FROM registered_vehicle rv 
-        JOIN bookings b ON b.car_id = rv.carid 
+        FROM bookings b
+        LEFT JOIN registered_vehicle rv ON b.car_id = rv.carid 
         WHERE b.order_id = ?`;
 
   database.query(dynamicCarQuery, [orderId], (err, results) => {
@@ -52,9 +53,12 @@ const handleRazorpayWebhook = (req, res) => {
 
     const carData = results[0] || {};
     const carName = carData.carName ? `${carData.brand} ${carData.carName}` : "Your Rental Car";
-    const carId = carData.carid;
-    const uid = carData.user_id;
+    const carId = carData.carid || null;
+    
+    // Fallback: Agar user_id direct query se check na ho, toh crash na ho null value set ho jaye
+    const uid = carData.user_id || null; 
 
+    // Email logic inside standard promise tracking
     if (status === "PAID" && email) {
       const bookingDate = new Date().toLocaleDateString();
       sendEmail({
@@ -106,17 +110,18 @@ const handleRazorpayWebhook = (req, res) => {
     const updateBookingQuery = "UPDATE bookings SET payment_status = ? WHERE order_id = ?";
     const updateVehicleQuery = "UPDATE registered_vehicle SET status = 'UNAVAILABLE' WHERE carid = ?";
 
-    // Nested Query Resolution Safely
-    database.query(logQuery, [orderId, uid, paymentId, email, contact, amount, status, failureReason], (err) => {
-      if (err) console.error("Log Error:", err.message);
+    // Safe sequential transaction updates
+    database.query(logQuery, [orderId, uid, paymentId, email, contact, amount, status, failureReason], (logErr) => {
+      if (logErr) console.error("Log Error Details:", logErr.message);
 
-      database.query(updateBookingQuery, [status, orderId], (err) => {
-        if (err) console.error("Booking Update Error:", err.message);
+      database.query(updateBookingQuery, [status, orderId], (updateErr) => {
+        if (updateErr) console.error("Booking Status Update Error:", updateErr.message);
+        else console.log(`✅ Booking table updated to status: ${status}`);
 
         if (status === "PAID" && carId) {
-          database.query(updateVehicleQuery, [carId], (err) => {
-            if (err) console.error("Vehicle Status Error:", err.message);
-            else console.log("🚗 Vehicle marked UNAVAILABLE.");
+          database.query(updateVehicleQuery, [carId], (vehErr) => {
+            if (vehErr) console.error("Vehicle Status Update Error:", vehErr.message);
+            else console.log("🚗 Vehicle marked UNAVAILABLE successfully.");
             
             return res.status(200).json({ status: "ok" });
           });
