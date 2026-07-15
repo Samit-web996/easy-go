@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const app = express();
 app.use(express.json())
@@ -9,7 +10,7 @@ const cors = require('cors')
 //     credentials:true
 // }))
 app.use(cors({
-  origin: ["https://easygo-cars-admin.vercel.app","http://localhost:5173"], 
+  origin: ["https://easygo-cars-admin.vercel.app","http://localhost:5173","http://localhost:5174","http://localhost:3000"], 
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -99,11 +100,9 @@ cron.schedule('0 * * * *', async () => {
         ) AND STATUS = 'UNAVAILABLE'`;
 
     try {
-        // 💡 Promises me query ka result ek array hota hai jisme pehla element result/rows hota hai
-        const [result] = await database.query(availabilityQuery);
+        const [result] = await database.promise().query(availabilityQuery);
 
         if (result && result.affectedRows > 0) {
-            // 💡 Backticks use kiye hain taaki dynamic text sahi se dikhe
             console.log(`Success: ${result.affectedRows} cars are now AVAILABLE again.`);
         } else {
             console.log("No cars needed status update right now.");

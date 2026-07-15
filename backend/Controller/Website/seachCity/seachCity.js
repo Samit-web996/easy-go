@@ -10,15 +10,17 @@ const searchLocation = (req, res) => {
   });
 };
 
-const fetchLoc = (req,res) => {
-      const sql = "SELECT * FROM city_list";
-      database.query(sql , (err,result) => {
-            if (err) {
-                  console.error("Database error" , err);
-                  return res.status(500).json({success: false, error: err})
-            }
-            res.status(200).json(result)
-      });
+const fetchLoc = async (req, res) => {
+  const sql = "SELECT * FROM city_list";
+  
+  try {
+    const [result] = await database.query(sql);
+    
+    return res.status(200).json(result);
+  } catch (err) {
+    console.error("Database error", err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
 };
 
 
