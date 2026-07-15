@@ -2,15 +2,15 @@ const nodemailer = require('nodemailer');
 
 const sendEmail = async (options) => {
       const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com', 
-            port: 587,             
-            secure: false,
-            connectionTimeout: 10000,
-            family: 4,                
+            service: 'gmail', // 👇 Gmail ka native service handler use kiya (Sabse stable)
             auth : {
                   user : process.env.EMAIL_USER,
                   pass : process.env.EMAIL_PASS,
             },
+            tls: {
+                  // 👇 Cloud platforms par certificate validation errors ko bypass karne ke liye
+                  rejectUnauthorized: false
+            }
       });
 
       const mailOptions = {
