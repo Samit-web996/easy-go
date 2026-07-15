@@ -49,7 +49,6 @@ export default function ViewEmployeeModal({ isOpen, employee, onClose }) {
   return (
     // Fixed Parent Overlay setup for perfect positioning
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 transition-all duration-300">
-      {/* PERFECT TRANSPARENT BLUR BACKGROUND OVERLAY */}
       <div
         className="absolute inset-0 transition-opacity bg-white/10 dark:bg-black/20"
         style={{
@@ -146,7 +145,7 @@ export default function ViewEmployeeModal({ isOpen, employee, onClose }) {
             <DetailItem
               icon={CreditCard}
               label="Aadhar Registry"
-              value={employee.aadhar ? "[Aadhaar Redacted]" : "N/A"}
+              value={employee.aadhar}
               iconColor="text-amber-500 dark:text-amber-400"
             />
             <DetailItem
