@@ -3,7 +3,7 @@ const database = require("../../../Model/dbConnect");
 const sendEmail = require("../../nodemailer");
 const Razorpay = require("razorpay");
 
-const handleRazorpayWebhook = (req, res) => {
+const handleRazorpayWebhook = async (req, res) => {
   const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
   const signature = req.headers["x-razorpay-signature"];
 
@@ -45,7 +45,8 @@ const handleRazorpayWebhook = (req, res) => {
         LEFT JOIN registered_vehicle rv ON b.car_id = rv.carid 
         WHERE b.order_id = ?`;
 
-  database.query(dynamicCarQuery, [orderId], (err, results) => {
+  // Callback wrapper database process
+  database.query(dynamicCarQuery, [orderId], async (err, results) => {
     if (err) {
       console.error("DB Query Error:", err.message);
       return res.status(500).send("Internal Error");
@@ -60,49 +61,53 @@ const handleRazorpayWebhook = (req, res) => {
       console.log(`Triggering Email flow for address: ${email}`);
       const bookingDate = new Date().toLocaleDateString();
       
-      sendEmail({
-        email: email,
-        subject: `Booking Confirmed: Your trip with ${carName} is ready! 🚗`,
-        html: `
-        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden;">
-            <div style="background-color: #f97316; color: white; padding: 20px; text-align: center;">
-                <h1 style="margin: 0;">Congratulations! 🎉</h1>
-                <p style="font-size: 18px; margin: 5px 0 0 0;">Your EasyGo Booking is Confirmed</p>
-            </div>
-            <div style="padding: 20px;">
-                <p>Hi there,</p>
-                <p>Great news! Your booking for <b>${carName}</b> has been successfully confirmed. Get ready for a smooth and comfortable ride.</p>
-                <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-                <h3 style="color: #f97316;">Booking Summary</h3>
-                <table style="width: 100%; border-collapse: collapse;">
-                    <tr>
-                        <td style="padding: 8px 0; color: #666;">Order ID:</td>
-                        <td style="padding: 8px 0; text-align: right; font-weight: bold;">${orderId}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 8px 0; color: #666;">Payment ID:</td>
-                        <td style="padding: 8px 0; text-align: right; font-weight: bold;">${paymentId}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 8px 0; color: #666;">Date of Booking:</td>
-                        <td style="padding: 8px 0; text-align: right; font-weight: bold;">${bookingDate}</td>
-                    </tr>
-                    <tr style="background-color: #fff7ed;">
-                        <td style="padding: 12px 8px; color: #333; font-weight: bold;">Total Paid:</td>
-                        <td style="padding: 12px 8px; text-align: right; color: #f97316; font-size: 18px; font-weight: bold;">₹${amount}</td>
-                    </tr>
-                </table>
-                <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-                <p style="font-size: 14px; color: #666;">
-                    <b>Note:</b> Please keep your original ID and license ready at the time of pick-up.
-                </p>
-            </div>
-            <div style="background-color: #f4f4f4; padding: 15px; text-align: center; font-size: 12px; color: #888;">
-                © 2026 EasyGo Rentals. All rights reserved.<br>Bhopal, Madhya Pradesh, India.
-            </div>
-        </div>`
-      }).then(() => console.log("✅ Confirmation Email Sent successfully."))
-        .catch(mailErr => console.error("❌ Nodemailer Processing Error:", mailErr.message));
+      try {
+        await sendEmail({
+          email: email,
+          subject: `Booking Confirmed: Your trip with ${carName} is ready! 🚗`,
+          html: `
+          <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden;">
+              <div style="background-color: #f97316; color: white; padding: 20px; text-align: center;">
+                  <h1 style="margin: 0;">Congratulations! 🎉</h1>
+                  <p style="font-size: 18px; margin: 5px 0 0 0;">Your EasyGo Booking is Confirmed</p>
+              </div>
+              <div style="padding: 20px;">
+                  <p>Hi there,</p>
+                  <p>Great news! Your booking for <b>${carName}</b> has been successfully confirmed. Get ready for a smooth and comfortable ride.</p>
+                  <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+                  <h3 style="color: #f97316;">Booking Summary</h3>
+                  <table style="width: 100%; border-collapse: collapse;">
+                      <tr>
+                          <td style="padding: 8px 0; color: #666;">Order ID:</td>
+                          <td style="padding: 8px 0; text-align: right; font-weight: bold;">${orderId}</td>
+                      </tr>
+                      <tr>
+                          <td style="padding: 8px 0; color: #666;">Payment ID:</td>
+                          <td style="padding: 8px 0; text-align: right; font-weight: bold;">${paymentId}</td>
+                      </tr>
+                      <tr>
+                          <td style="padding: 8px 0; color: #666;">Date of Booking:</td>
+                          <td style="padding: 8px 0; text-align: right; font-weight: bold;">${bookingDate}</td>
+                      </tr>
+                      <tr style="background-color: #fff7ed;">
+                          <td style="padding: 12px 8px; color: #333; font-weight: bold;">Total Paid:</td>
+                          <td style="padding: 12px 8px; text-align: right; color: #f97316; font-size: 18px; font-weight: bold;">₹${amount}</td>
+                      </tr>
+                  </table>
+                  <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+                  <p style="font-size: 14px; color: #666;">
+                      <b>Note:</b> Please keep your original ID and license ready at the time of pick-up.
+                  </p>
+              </div>
+              <div style="background-color: #f4f4f4; padding: 15px; text-align: center; font-size: 12px; color: #888;">
+                  © 2026 EasyGo Rentals. All rights reserved.<br>Bhopal, Madhya Pradesh, India.
+              </div>
+          </div>`
+        });
+        console.log("✅ Confirmation Email Sent successfully through Brevo Relay.");
+      } catch (mailErr) {
+        console.error("❌ Nodemailer Processing Error:", mailErr.message);
+      }
     } else {
       console.log("⚠️ Email skipped: Status is not PAID or Email is missing/undefined from payload.");
     }
@@ -111,7 +116,6 @@ const handleRazorpayWebhook = (req, res) => {
     const updateBookingQuery = "UPDATE bookings SET payment_status = ? WHERE order_id = ?";
     const updateVehicleQuery = "UPDATE registered_vehicle SET status = 'UNAVAILABLE' WHERE carid = ?";
 
-    // Safe transaction updates
     database.query(logQuery, [orderId, uid, paymentId, email, contact, amount, status, failureReason], (logErr) => {
       if (logErr) console.error("Log Error Details:", logErr.message);
 
