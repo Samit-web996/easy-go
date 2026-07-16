@@ -1,24 +1,26 @@
-const nodemailer = require('nodemailer');
+const Nodemailer = require("nodemailer");
+const { MailtrapTransport } = require("mailtrap");
 
 const sendEmail = async (options) => {
-      const transporter = nodemailer.createTransport({
-            host: "sandbox.smtp.mailtrap.io",
-            port: 2525, 
-            auth: {
-                  user: process.env.MAILTRAP_USER, 
-                  pass: process.env.MAILTRAP_PASS  
-            }
-      });
+  const transport = Nodemailer.createTransport(
+    MailtrapTransport({
+      token: process.env.MAILTRAP_API_TOKEN, 
+    })
+  );
 
-      const mailOptions = {
-            from: `"EasyGo Rentals" <test@easygorentals.com>`, 
-            to: options.email, 
-            subject: options.subject,
-            text: options.message,
-            html: options.html,
-      };
+  const sender = {
+    address: "hello@demomailtrap.co", 
+    name: "EasyGo Rentals",
+  };
 
-      await transporter.sendMail(mailOptions);
+  await transport.sendMail({
+    from: sender,
+    to: [options.email], 
+    subject: options.subject, 
+    text: options.message, 
+    html: options.html, 
+    category: "Car Booking Confirmation",
+  });
 };
 
 module.exports = sendEmail;
