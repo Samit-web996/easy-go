@@ -18,7 +18,7 @@ app.use(cors({
 const database = require('./Model/dbConnect')
 const cron = require('node-cron')
 
-port = 3006;
+const PORT = process.env.PORT;
 
 app.get("/test", (req, res) => {
     res.send("Test Route Working");
@@ -115,5 +115,5 @@ cron.schedule('0 * * * *', async () => {
 
 
 app.listen(port, () => {
-    console.log(`Server is running on port ${port} successfully`);
+    console.log(`Server is running on port ${PORT} successfully`);
 });
