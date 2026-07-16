@@ -7,7 +7,6 @@ const handleRazorpayWebhook = async (req, res) => {
   const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
   const signature = req.headers["x-razorpay-signature"];
 
-  // 1. Signature Verification
   const isValid = Razorpay.validateWebhookSignature(
     JSON.stringify(req.body),
     signature,
@@ -39,23 +38,27 @@ const handleRazorpayWebhook = async (req, res) => {
     return res.status(200).json({ status: "ignored" });
   }
 
-  const dynamicCarQuery = `
+  const queryPromise = (sql, params) => {
+    return new Promise((resolve, reject) => {
+      database.query(sql, params, (err, results) => {
+        if (err) return reject(err);
+        resolve(results);
+      });
+    });
+  };
+
+  try {
+    const dynamicCarQuery = `
         SELECT rv.carid, rv.carName, rv.brand, b.user_id 
         FROM bookings b
         LEFT JOIN registered_vehicle rv ON b.car_id = rv.carid 
         WHERE b.order_id = ?`;
-
-  // Callback wrapper database process
-  database.query(dynamicCarQuery, [orderId], async (err, results) => {
-    if (err) {
-      console.error("DB Query Error:", err.message);
-      return res.status(500).send("Internal Error");
-    }
-
+    
+    const results = await queryPromise(dynamicCarQuery, [orderId]);
     const carData = results[0] || {};
     const carName = carData.carName ? `${carData.brand} ${carData.carName}` : "Your Rental Car";
     const carId = carData.carid || null;
-    const uid = carData.user_id || null; 
+    const uid = carData.user_id || null;
 
     if (status === "PAID" && email) {
       console.log(`Triggering Email flow for address: ${email}`);
@@ -73,7 +76,7 @@ const handleRazorpayWebhook = async (req, res) => {
               </div>
               <div style="padding: 20px;">
                   <p>Hi there,</p>
-                  <p>Great news! Your booking for <b>${carName}</b> has been successfully confirmed. Get ready for a smooth and comfortable ride.</p>
+                  <p>Great news! Your booking for <b>${carName}</b> has been successfully confirmed.</p>
                   <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
                   <h3 style="color: #f97316;">Booking Summary</h3>
                   <table style="width: 100%; border-collapse: collapse;">
@@ -85,58 +88,41 @@ const handleRazorpayWebhook = async (req, res) => {
                           <td style="padding: 8px 0; color: #666;">Payment ID:</td>
                           <td style="padding: 8px 0; text-align: right; font-weight: bold;">${paymentId}</td>
                       </tr>
-                      <tr>
-                          <td style="padding: 8px 0; color: #666;">Date of Booking:</td>
-                          <td style="padding: 8px 0; text-align: right; font-weight: bold;">${bookingDate}</td>
-                      </tr>
                       <tr style="background-color: #fff7ed;">
                           <td style="padding: 12px 8px; color: #333; font-weight: bold;">Total Paid:</td>
                           <td style="padding: 12px 8px; text-align: right; color: #f97316; font-size: 18px; font-weight: bold;">₹${amount}</td>
                       </tr>
                   </table>
-                  <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-                  <p style="font-size: 14px; color: #666;">
-                      <b>Note:</b> Please keep your original ID and license ready at the time of pick-up.
-                  </p>
-              </div>
-              <div style="background-color: #f4f4f4; padding: 15px; text-align: center; font-size: 12px; color: #888;">
-                  © 2026 EasyGo Rentals. All rights reserved.<br>Bhopal, Madhya Pradesh, India.
               </div>
           </div>`
         });
-        console.log("✅ Confirmation Email Sent successfully through Brevo Relay.");
+        console.log("✅ Confirmation Email Processed via Brevo Layer.");
       } catch (mailErr) {
-        console.error("❌ Nodemailer Processing Error:", mailErr.message);
+        console.error("❌ Email Trigger Exception:", mailErr.message);
       }
-    } else {
-      console.log("⚠️ Email skipped: Status is not PAID or Email is missing/undefined from payload.");
     }
 
     const logQuery = `INSERT INTO payment_logs (order_id, uid, payment_id, user_email, user_contact, amount, status, failure_reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
     const updateBookingQuery = "UPDATE bookings SET payment_status = ? WHERE order_id = ?";
     const updateVehicleQuery = "UPDATE registered_vehicle SET status = 'UNAVAILABLE' WHERE carid = ?";
 
-    database.query(logQuery, [orderId, uid, paymentId, email, contact, amount, status, failureReason], (logErr) => {
-      if (logErr) console.error("Log Error Details:", logErr.message);
+    await queryPromise(logQuery, [orderId, uid, paymentId, email, contact, amount, status, failureReason]);
+    console.log("✅ Payment log recorded successfully.");
 
-      database.query(updateBookingQuery, [status, orderId], (updateErr) => {
-        if (updateErr) console.error("Booking Status Update Error:", updateErr.message);
-        else console.log(`✅ Booking table updated to status: ${status}`);
+    await queryPromise(updateBookingQuery, [status, orderId]);
+    console.log(`✅ Bookings state table synchronized to status: ${status}`);
 
-        if (status === "PAID" && carId) {
-          database.query(updateVehicleQuery, [carId], (vehErr) => {
-            if (vehErr) console.error("Vehicle Status Update Error:", vehErr.message);
-            else console.log("🚗 Vehicle marked UNAVAILABLE successfully.");
-            
-            return res.status(200).json({ status: "ok" });
-          });
-        } else {
-          return res.status(200).json({ status: "ok" });
-        }
-      });
-    });
+    if (status === "PAID" && carId) {
+      await queryPromise(updateVehicleQuery, [carId]);
+      console.log("🚗 Vehicle fleet state marked UNAVAILABLE successfully.");
+    }
 
-  });
+    return res.status(200).json({ status: "ok" });
+
+  } catch (error) {
+    console.error("🚨 CRITICAL WEBHOOK QUERY TRANSACTION ERROR:", error.message);
+    return res.status(500).json({ error: error.message });
+  }
 };
 
 module.exports = handleRazorpayWebhook;
