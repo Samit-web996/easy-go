@@ -12,8 +12,8 @@ const cors = require('cors')
 app.use(cors({
   origin: ["https://easygo-cars-admin.vercel.app","http://localhost:5173","http://localhost:5174","http://localhost:3000"], 
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['GET', 'POST', 'PUT', 'PATCH','DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-razorpay-signature']
 }));
 const database = require('./Model/dbConnect')
 const cron = require('node-cron')
