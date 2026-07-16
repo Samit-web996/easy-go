@@ -1,7 +1,7 @@
 const database = require("../../../Model/dbConnect")
 
 const getCarCategories = async (req, res) => {
-  const sql = "SELECT rv.carid, rv.carName, rv.brand, rv.model,rv.modelYear,rv.image, c.city_name,c.state_name ,rv.seat,rv.fuelType FROM registered_vehicle rv JOIN city_list c ON rv.loc_id = c.loc_id;"; 
+  const sql = "SELECT rv.*, c.city_name,c.state_name FROM registered_vehicle rv JOIN city_list c ON rv.loc_id = c.loc_id;"; 
   try {
     const [result] = await database.promise().query(sql);
     return res.status(200).json(result); 
