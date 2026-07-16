@@ -6,7 +6,7 @@ const database = require('../../../Model/dbConnect')
 const updateKYC = (req, res) => {
     const { uid } = req.params;
     const { aadhar_no, license_no, current_address } = req.body; 
-    const photoPath = req.file ? req.file.filename : null;
+    const photoPath = req.file ? req.file.path : null;
 
     const sql = `
         INSERT INTO user_kyc (uid, aadhar_no, license_no, current_address, user_photo)
@@ -25,7 +25,6 @@ const updateKYC = (req, res) => {
         if (err) {
             console.error("SQL Error:", err); 
             
-            // Check Constraint Error (Aadhar/License format)
             if (err.code === 'ER_CHECK_CONSTRAINT_VIOLATED') {
                 return res.status(400).json({ error: "Invalid Aadhar or License format!" });
             }
@@ -48,7 +47,6 @@ const kycStatus = (req, res) => {
         if (err) return res.status(500).json({ error: "Database error" });
 
         if (result.length > 0) {
-            // Optional chaining (?.) null check karta hai trim chalane se pehle
             const status = result[0].verification_status?.trim() || "pending";
             res.json({ exist: true, status: status });
         } else {
