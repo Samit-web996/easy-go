@@ -2,13 +2,12 @@ const nodemailer = require('nodemailer');
 
 const sendEmail = async (options) => {
       const transporter = nodemailer.createTransport({
-            service: 'gmail', // 👇 Gmail ka native service handler use kiya (Sabse stable)
+            service: 'gmail',
             auth : {
                   user : process.env.EMAIL_USER,
                   pass : process.env.EMAIL_PASS,
             },
             tls: {
-                  // 👇 Cloud platforms par certificate validation errors ko bypass karne ke liye
                   rejectUnauthorized: false
             }
       });

@@ -258,7 +258,7 @@ export default function BasicTable() {
                     </TableCell>
                     <TableCell className="!text-gray-800 dark:!text-zinc-200">
                       <span className="bg-gray-100 dark:bg-zinc-800 px-2 py-0.5 rounded-md font-mono text-xs font-bold border border-gray-200 dark:border-zinc-700">
-                        {row.seat} str
+                        {row.seat} Seater
                       </span>
                     </TableCell>
                     <TableCell className="!text-gray-700 dark:!text-zinc-300 !font-medium">
