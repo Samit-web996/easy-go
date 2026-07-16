@@ -11,7 +11,7 @@ const handleRazorpayWebhook = (req, res) => {
   const isValid = Razorpay.validateWebhookSignature(
     JSON.stringify(req.body),
     signature,
-    secret
+    secret,
   );
 
   if (!isValid) {
@@ -23,10 +23,15 @@ const handleRazorpayWebhook = (req, res) => {
   const { event, payload } = req.body;
   const payment = payload.payment.entity;
 
-  const orderId = payment.order_id || (payload.order ? payload.order.entity.id : null);
+  const orderId =
+    payment.order_id || (payload.order ? payload.order.entity.id : null);
   const paymentId = payment.id;
-  
-  const email = payment.email || (req.body.payload && req.body.payload.order ? req.body.payload.order.entity.email : null);
+
+  const email =
+    payment.email ||
+    (req.body.payload && req.body.payload.order
+      ? req.body.payload.order.entity.email
+      : null);
   const contact = payment.contact;
   const amount = payment.amount / 100;
   const failureReason = payment.error_description || null;
@@ -52,14 +57,19 @@ const handleRazorpayWebhook = (req, res) => {
     }
 
     const carData = results[0] || {};
-    const carName = carData.carName ? `${carData.brand} ${carData.carName}` : "Your Rental Car";
+    const carName = carData.carName
+      ? `${carData.brand} ${carData.carName}`
+      : "Your Rental Car";
     const carId = carData.carid || null;
-    const uid = carData.user_id || null; 
+    const uid = carData.user_id || null;
+
+    const start_date = carData.start_date || "N/A";
+    const end_date = carData.end_date || "N/A";
 
     if (status === "PAID" && email) {
       console.log(`Triggering Email flow for address: ${email}`);
       const bookingDate = new Date().toLocaleDateString();
-      
+
       sendEmail({
         email: email,
         subject: `Booking Confirmed: Your trip with ${carName} is ready! 🚗`,
@@ -87,6 +97,10 @@ const handleRazorpayWebhook = (req, res) => {
                         <td style="padding: 8px 0; color: #666;">Date of Booking:</td>
                         <td style="padding: 8px 0; text-align: right; font-weight: bold;">${bookingDate}</td>
                     </tr>
+                    <tr>
+                        <td style="padding: 8px 0; color: #666;">Trip Duration:</td>
+                        <td style="padding: 8px 0; text-align: right; font-weight: bold;">${start_date}-${end_date}</td>
+                    </tr>
                     <tr style="background-color: #fff7ed;">
                         <td style="padding: 12px 8px; color: #333; font-weight: bold;">Total Paid:</td>
                         <td style="padding: 12px 8px; text-align: right; color: #f97316; font-size: 18px; font-weight: bold;">₹${amount}</td>
@@ -100,38 +114,50 @@ const handleRazorpayWebhook = (req, res) => {
             <div style="background-color: #f4f4f4; padding: 15px; text-align: center; font-size: 12px; color: #888;">
                 © 2026 EasyGo Rentals. All rights reserved.<br>Bhopal, Madhya Pradesh, India.
             </div>
-        </div>`
-      }).then(() => console.log("✅ Confirmation Email Sent successfully."))
-        .catch(mailErr => console.error("❌ Nodemailer Processing Error:", mailErr.message));
+        </div>`,
+      })
+        .then(() => console.log("✅ Confirmation Email Sent successfully."))
+        .catch((mailErr) =>
+          console.error("❌ Nodemailer Processing Error:", mailErr.message),
+        );
     } else {
-      console.log("⚠️ Email skipped: Status is not PAID or Email is missing/undefined from payload.");
+      console.log(
+        "⚠️ Email skipped: Status is not PAID or Email is missing/undefined from payload.",
+      );
     }
 
     const logQuery = `INSERT INTO payment_logs (order_id, uid, payment_id, user_email, user_contact, amount, status, failure_reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-    const updateBookingQuery = "UPDATE bookings SET payment_status = ? WHERE order_id = ?";
-    const updateVehicleQuery = "UPDATE registered_vehicle SET status = 'UNAVAILABLE' WHERE carid = ?";
+    const updateBookingQuery =
+      "UPDATE bookings SET payment_status = ? WHERE order_id = ?";
+    const updateVehicleQuery =
+      "UPDATE registered_vehicle SET status = 'UNAVAILABLE' WHERE carid = ?";
 
     // Safe transaction updates
-    database.query(logQuery, [orderId, uid, paymentId, email, contact, amount, status, failureReason], (logErr) => {
-      if (logErr) console.error("Log Error Details:", logErr.message);
+    database.query(
+      logQuery,
+      [orderId, uid, paymentId, email, contact, amount, status, failureReason],
+      (logErr) => {
+        if (logErr) console.error("Log Error Details:", logErr.message);
 
-      database.query(updateBookingQuery, [status, orderId], (updateErr) => {
-        if (updateErr) console.error("Booking Status Update Error:", updateErr.message);
-        else console.log(`✅ Booking table updated to status: ${status}`);
+        database.query(updateBookingQuery, [status, orderId], (updateErr) => {
+          if (updateErr)
+            console.error("Booking Status Update Error:", updateErr.message);
+          else console.log(`✅ Booking table updated to status: ${status}`);
 
-        if (status === "PAID" && carId) {
-          database.query(updateVehicleQuery, [carId], (vehErr) => {
-            if (vehErr) console.error("Vehicle Status Update Error:", vehErr.message);
-            else console.log("🚗 Vehicle marked UNAVAILABLE successfully.");
-            
+          if (status === "PAID" && carId) {
+            database.query(updateVehicleQuery, [carId], (vehErr) => {
+              if (vehErr)
+                console.error("Vehicle Status Update Error:", vehErr.message);
+              else console.log("🚗 Vehicle marked UNAVAILABLE successfully.");
+
+              return res.status(200).json({ status: "ok" });
+            });
+          } else {
             return res.status(200).json({ status: "ok" });
-          });
-        } else {
-          return res.status(200).json({ status: "ok" });
-        }
-      });
-    });
-
+          }
+        });
+      },
+    );
   });
 };
 
