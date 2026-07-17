@@ -3,6 +3,7 @@ const database = require("../../../../Model/dbConnect");
 const path = require('path');
 const sharp = require('sharp');
 const fs = require('fs');
+const cloudinary = require('cloudinary').v2;
 
 const addVehicle = async (req, res) => {
   const {
@@ -28,9 +29,12 @@ const addVehicle = async (req, res) => {
     }
 
     if (result.length > 0) {
-      // Fail-safe: Agar vehicle already registered hai toh uploaded file ko pehle hi remove kar do
-      if (req.file && fs.existsSync(req.file.path)) {
-        fs.unlinkSync(req.file.path);
+      if (req.file && req.file.filename) {
+        try {
+          await cloudinary.uploader.destroy(req.file.filename);
+        } catch (cloudErr) {
+          console.error("Cloudinary asset cleanup failed:", cloudErr);
+        }
       }
       return res.status(400).json({
         success: false,
@@ -38,35 +42,14 @@ const addVehicle = async (req, res) => {
       });
     }
 
-    let finalImageName = null;
-    let outputPath = null;
-
+    let finalImageUrl = null;
     if (req.file) {
-      try {
-        const inputPath = req.file.path;
-        finalImageName = `optimized-${Date.now()}.webp`; 
-        outputPath = path.join(req.file.destination, finalImageName); 
-
-        // Sharp processing engine
-        await sharp(inputPath)
-          .webp({ quality: 80 }) 
-          .resize(1200, 800, { fit: 'inside', withoutEnlargement: true }) 
-          .toFile(outputPath);
-
-        // Original heavy file ko remove karo
-        if (fs.existsSync(inputPath)) {
-          fs.unlinkSync(inputPath);
-        }
-      } catch (imageErr) {
-        console.error("Image optimization failed:", imageErr);
-        return res.status(500).json({ success: false, message: "Failed to process vehicle image" });
-      }
+      finalImageUrl = req.file.path || req.file.secure_url; 
     }
 
     const sql =
       "INSERT INTO vehicle_req(owner_name, email, registrationNum, loc_id, carName, brand, model, seat, features, fuelType, pricePerDay, modelYear, image, description) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     
-    // 🎯 FIX: 'image' ki jagah ab 'finalImageName' (.webp waala naam) bhej rahe hain
     const values = [
       owner_name,
       email,
@@ -75,26 +58,30 @@ const addVehicle = async (req, res) => {
       carName,
       brand,
       model,
-      seat,
+      seat ? parseInt(seat, 10) : null,
       features,
       fuelType,
-      pricePerDay,
+      pricePerDay ? parseFloat(pricePerDay) : null,
       modelYear,
-      finalImageName, // 👈 Successfully updated variable mapping
+      finalImageUrl, 
       description,
     ];
 
-    database.query(sql, values, (err, insertResult) => {
+    database.query(sql, values, async (err, insertResult) => {
       if (err) {
-        console.log(err);
-        // Fail-safe: Agar db logic fail kare toh optimized webp file clean kar do
-        if (outputPath && fs.existsSync(outputPath)) {
-          fs.unlinkSync(outputPath);
+        console.error("Database Insertion Error:", err);
+        
+        if (req.file && req.file.filename) {
+          try {
+            await cloudinary.uploader.destroy(req.file.filename);
+          } catch (cloudErr) {
+            console.error("Cloudinary fallback cleanup failed:", cloudErr);
+          }
         }
         return res.status(500).json({ success: false, message: "Database Error during insertion" });
-      } else {
-        return res.status(200).json({ success: true, message: "Vehicle added successfully" });
       }
+
+      return res.status(200).json({ success: true, message: "Vehicle added successfully" });
     });
   });
 };
