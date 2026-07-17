@@ -2,7 +2,7 @@ const database = require('../../../Model/dbConnect')
 
 const kycModal = (req, res) => {
       const {ownerName,aadhar,mobile,address,email} = req.body;
-      const profile_img = req.file ? req.file.filename : null;
+      const profile_img = req.file ? (req.file.path || req.file.secure_url) : null;
       const sql = "INSERT INTO ve_host_info(ownerName,aadhar,mobile,address,profile_img, email) VALUES (?,?,?,?,?,?)";
       const values = [ownerName,aadhar,mobile,address,profile_img,email];
 
