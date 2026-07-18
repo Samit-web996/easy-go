@@ -45,7 +45,7 @@ const handleRazorpayWebhook = (req, res) => {
   }
 
   const dynamicCarQuery = `
-        SELECT rv.carid, rv.carName, rv.brand, b.user_id 
+        SELECT rv.carid, rv.carName, rv.brand, rv.registrationNum, b.user_id, b.start_date,b.end_date
         FROM bookings b
         LEFT JOIN registered_vehicle rv ON b.car_id = rv.carid 
         WHERE b.order_id = ?`;
